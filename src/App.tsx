@@ -1,6 +1,12 @@
 import { AppShell, Burger, Group, Skeleton, Image } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import logo from "../public/logo.svg";
+import logo from "/logo.svg?url";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
 
 export default function App() {
   const [opened, { toggle }] = useDisclosure();
@@ -14,6 +20,12 @@ export default function App() {
         <Group h="100%" px="md">
           <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
           <Image src={logo} height={50} />
+          <SignedOut>
+            <SignInButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">

@@ -1,7 +1,6 @@
 {
   "name": "app.ddclinic.pl",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,6 +10,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.25.2",
     "@mantine/charts": "^7.17.2",
     "@mantine/core": "^7.17.2",
     "@mantine/dates": "^7.17.2",

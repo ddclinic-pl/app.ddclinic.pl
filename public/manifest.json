@@ -1,0 +1,12 @@
+{
+  "theme_color": "#000000",
+  "background_color": "#2EC6FE",
+  "orientation": "portrait",
+  "display": "standalone",
+  "dir": "auto",
+  "lang": "pl-PL",
+  "name": "Dorotowska Dental Clinic",
+  "short_name": "ddclinic",
+  "start_url": "https://app.ddclinic.pl",
+  "scope": "https://app.ddclinic.pl"
+}
