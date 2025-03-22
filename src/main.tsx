@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import "@mantine/core/styles.css";
-import { MantineProvider } from "@mantine/core";
+import { createTheme, ColorSchemeScript, MantineProvider } from "@mantine/core";
 import {
   ClerkProvider,
   SignedIn,
@@ -17,6 +17,10 @@ if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key");
 }
 
+const theme = createTheme({
+  primaryColor: "gray",
+});
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
@@ -24,7 +28,8 @@ createRoot(document.getElementById("root")!).render(
         <RedirectToSignIn />
       </SignedOut>
       <SignedIn>
-        <MantineProvider>
+        <ColorSchemeScript defaultColorScheme="auto" />
+        <MantineProvider theme={theme} defaultColorScheme="auto">
           <App />
         </MantineProvider>
       </SignedIn>
