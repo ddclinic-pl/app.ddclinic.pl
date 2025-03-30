@@ -1,53 +1,50 @@
-import { AppShell, Burger, Group, Skeleton, Image } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import logo from "/logo.svg?url";
-import { UserButton } from "@clerk/clerk-react";
-import { UsersTable } from "./UsersTable";
+// Import the generated route tree
+import { routeTree } from "./routeTree.gen";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useAuth } from "@clerk/clerk-react";
+import { useEffect, useState } from "react";
+import * as axios from "axios";
+
+const queryClient = new QueryClient();
+
+// Create a new app instance
+const app = createRouter({
+  routeTree,
+  context: {
+    queryClient,
+  },
+  defaultPreload: "intent",
+  // Since we're using React Query, we don't want loader calls to ever be stale
+  // This will ensure that the loader is always called when the route is preloaded or visited
+  defaultPreloadStaleTime: 0,
+  scrollRestoration: true,
+});
+
+// Register the app instance for type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof app;
+  }
+}
 
 export default function App() {
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure();
+  const auth = useAuth();
+  const [token, setToken] = useState<string | null>(null);
+  useEffect(() => {
+    (async () => {
+      const token = await auth.getToken();
+      if (token) {
+        axios.default.defaults.headers.Authorization = `Bearer ${token}`;
+        axios.default.defaults.baseURL = import.meta.env.VITE_API_DDCLINIC;
+        setToken(token);
+      }
+    })();
+  }, [auth]);
+  if (!token) return null;
   return (
-    <AppShell
-      header={{ height: 60 }}
-      navbar={{
-        width: 300,
-        breakpoint: "sm",
-        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
-      }}
-      padding="md"
-    >
-      <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
-          <Group>
-            <Burger
-              opened={mobileOpened}
-              onClick={toggleMobile}
-              hiddenFrom="sm"
-              size="sm"
-            />
-            <Burger
-              opened={desktopOpened}
-              onClick={toggleDesktop}
-              visibleFrom="sm"
-              size="sm"
-            />
-            <Image src={logo} height={40} />
-          </Group>
-          <UserButton />
-        </Group>
-      </AppShell.Header>
-      <AppShell.Navbar p="md">
-        Navbar
-        {Array(15)
-          .fill(0)
-          .map((_, index) => (
-            <Skeleton key={index} h={28} mt="sm" animate={false} />
-          ))}
-      </AppShell.Navbar>
-      <AppShell.Main>
-        <UsersTable />
-      </AppShell.Main>
-    </AppShell>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={app} />
+    </QueryClientProvider>
   );
 }
