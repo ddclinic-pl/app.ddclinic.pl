@@ -1,12 +1,14 @@
-// Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useAuth } from "@clerk/clerk-react";
-import { useEffect, useState } from "react";
-import * as axios from "axios";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
 
 // Create a new app instance
 const app = createRouter({
@@ -28,20 +30,18 @@ declare module "@tanstack/react-router" {
   }
 }
 
+// Extend the window object to include Clerk session token retrieval
+declare global {
+  interface Window {
+    Clerk: {
+      session: {
+        getToken: ({ template }: { template: string }) => Promise<string>;
+      };
+    };
+  }
+}
+
 export default function App() {
-  const auth = useAuth();
-  const [token, setToken] = useState<string | null>(null);
-  useEffect(() => {
-    (async () => {
-      const token = await auth.getToken();
-      if (token) {
-        axios.default.defaults.headers.Authorization = `Bearer ${token}`;
-        axios.default.defaults.baseURL = import.meta.env.VITE_API_DDCLINIC;
-        setToken(token);
-      }
-    })();
-  }, [auth]);
-  if (!token) return null;
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={app} />

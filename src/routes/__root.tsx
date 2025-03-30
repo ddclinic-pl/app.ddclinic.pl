@@ -1,15 +1,14 @@
-import {
-  createRootRouteWithContext,
-  Link,
-  Outlet,
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { useDisclosure } from "@mantine/hooks";
-import { AppShell, Burger, Group, Image, Skeleton } from "@mantine/core";
-import logo from "/logo.svg?url";
-import { UserButton } from "@clerk/clerk-react";
+import { AppShell } from "@mantine/core";
 import { ReactNode } from "react";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type { QueryClient } from "@tanstack/react-query";
+import { ErrorBoundary } from "react-error-boundary";
+import { ErrorScreen } from "../components/ErrorScreen.tsx";
+import { NotFoundScreen } from "../components/NotFoundScreen.tsx";
+import { AppHeader } from "../components/AppHeader.tsx";
+import { AppNavigation } from "../components/AppNavigation.tsx";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -22,14 +21,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       <TanStackRouterDevtools />
     </Layout>
   ),
-  notFoundComponent: () => {
-    return (
-      <div>
-        <p>This is the notFoundComponent configured on root route</p>
-        <Link to="/">Start Over</Link>
-      </div>
-    );
-  },
+  notFoundComponent: NotFoundScreen,
 });
 
 function Layout({ children }: { children: ReactNode }) {
@@ -46,34 +38,24 @@ function Layout({ children }: { children: ReactNode }) {
       padding="md"
     >
       <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
-          <Group>
-            <Burger
-              opened={mobileOpened}
-              onClick={toggleMobile}
-              hiddenFrom="sm"
-              size="sm"
-            />
-            <Burger
-              opened={desktopOpened}
-              onClick={toggleDesktop}
-              visibleFrom="sm"
-              size="sm"
-            />
-            <Image src={logo} height={24} />
-          </Group>
-          <UserButton />
-        </Group>
+        <AppHeader
+          handlers={{
+            mobileOpened,
+            desktopOpened,
+            toggleMobile,
+            toggleDesktop,
+          }}
+        />
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        Navbar
-        {Array(15)
-          .fill(0)
-          .map((_, index) => (
-            <Skeleton key={index} h={28} mt="sm" animate={false} />
-          ))}
+        <AppNavigation
+          toggleMobile={toggleMobile}
+          toggleDesktop={toggleDesktop}
+        />
       </AppShell.Navbar>
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main>
+        <ErrorBoundary fallbackRender={ErrorScreen}>{children}</ErrorBoundary>
+      </AppShell.Main>
     </AppShell>
   );
 }

@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import "@mantine/core/styles.css";
+import "@mantine/notifications/styles.css";
 import { ColorSchemeScript, createTheme, MantineProvider } from "@mantine/core";
 import {
   ClerkProvider,
@@ -10,6 +11,7 @@ import {
   SignedOut,
 } from "@clerk/clerk-react";
 import App from "./App.tsx";
+import { Notifications } from "@mantine/notifications";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -31,6 +33,7 @@ createRoot(document.getElementById("root")!).render(
         <ColorSchemeScript defaultColorScheme="auto" />
         <MantineProvider theme={theme} defaultColorScheme="auto">
           <App />
+          <Notifications />
         </MantineProvider>
       </SignedIn>
     </ClerkProvider>

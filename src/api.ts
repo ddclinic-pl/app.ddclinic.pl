@@ -1,29 +1,33 @@
 import { queryOptions } from "@tanstack/react-query";
-import * as axios from "axios";
+import axios from "axios";
+import { notifications } from "@mantine/notifications";
+import { Appointment } from "./api-types.ts";
 
-export interface Appointment {
-  date: string;
-  startTime: string;
-  endTime: string;
-  notes: string;
-  patient?: {
-    firstName: string;
-    lastName: string;
-  };
-}
+axios.defaults.baseURL = import.meta.env.VITE_API_DDCLINIC;
 
-export const appointmentsQueryOptions = (date: string) =>
+axios.interceptors.request.use(async (config) => {
+  config.headers.Authorization = `Bearer ${await window.Clerk.session.getToken({ template: "api-ddclinic-pl" })}`;
+  return config;
+});
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    notifications.show({
+      title: "Błąd",
+      message: "Nie udało się pobrać danych",
+      color: "red",
+    });
+    return Promise.reject(error);
+  },
+);
+
+export const getAppointments = (date: string) =>
   queryOptions({
     queryKey: ["appointments"],
     queryFn: async (): Promise<Appointment[]> => {
-      try {
-        const response = await axios.default.get<Appointment[]>(
-          `/appointments?date=${date}`,
-        );
-        return response.data;
-      } catch (error) {
-        console.error(error);
-        throw new Error("Failed to fetch posts");
-      }
+      return await axios
+        .get<Appointment[]>(`/appointments?date=${date}`)
+        .then((response) => response.data);
     },
   });
