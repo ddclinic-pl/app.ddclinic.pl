@@ -3,13 +3,14 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import "@mantine/core/styles.css";
-import { createTheme, ColorSchemeScript, MantineProvider } from "@mantine/core";
+import { ColorSchemeScript, createTheme, MantineProvider } from "@mantine/core";
 import {
   ClerkProvider,
+  RedirectToSignIn,
   SignedIn,
   SignedOut,
-  RedirectToSignIn,
 } from "@clerk/clerk-react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -21,6 +22,8 @@ const theme = createTheme({
   primaryColor: "gray",
 });
 
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
@@ -28,10 +31,12 @@ createRoot(document.getElementById("root")!).render(
         <RedirectToSignIn />
       </SignedOut>
       <SignedIn>
-        <ColorSchemeScript defaultColorScheme="auto" />
-        <MantineProvider theme={theme} defaultColorScheme="auto">
-          <App />
-        </MantineProvider>
+        <QueryClientProvider client={queryClient}>
+          <ColorSchemeScript defaultColorScheme="auto" />
+          <MantineProvider theme={theme} defaultColorScheme="auto">
+            <App />
+          </MantineProvider>
+        </QueryClientProvider>
       </SignedIn>
     </ClerkProvider>
   </StrictMode>,
