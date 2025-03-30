@@ -6,11 +6,11 @@ import FullScreenLoader from "../components/FullScreenLoader.tsx";
 import { AppointmentsTimeline } from "../components/AppointmentsTimeline.tsx";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: MyAppointments,
   pendingComponent: FullScreenLoader,
 });
 
-function Index() {
+function MyAppointments() {
   const appointmentsQuery = useSuspenseQuery(getAppointments("2024-03-20"));
   return (
     <Stack>

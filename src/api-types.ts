@@ -23,3 +23,12 @@ export interface AppointmentPatient {
   firstName: string;
   lastName: string;
 }
+
+export interface User {
+  displayName: string;
+  email?: string;
+}
+
+export interface UserId {
+  value?: string;
+}

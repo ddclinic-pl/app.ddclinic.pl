@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
-import { Appointment } from "./api-types.ts";
+import { Appointment, User } from "./api-types.ts";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_DDCLINIC;
 
@@ -28,6 +28,16 @@ export const getAppointments = (date: string) =>
     queryFn: async (): Promise<Appointment[]> => {
       return await axios
         .get<Appointment[]>(`/appointments?date=${date}`)
+        .then((response) => response.data);
+    },
+  });
+
+export const getUsers = () =>
+  queryOptions({
+    queryKey: ["users"],
+    queryFn: async (): Promise<User[]> => {
+      return await axios
+        .get<User[]>(`/users`)
         .then((response) => response.data);
     },
   });

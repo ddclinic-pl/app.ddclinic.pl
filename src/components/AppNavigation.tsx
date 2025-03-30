@@ -23,6 +23,12 @@ export function AppNavigation({
       />
       <NavLink
         component={Link}
+        to="/users"
+        label="Użytkownicy"
+        onClick={handleClick}
+      />
+      <NavLink
+        component={Link}
         to="/about"
         label="O aplikacji"
         onClick={handleClick}
