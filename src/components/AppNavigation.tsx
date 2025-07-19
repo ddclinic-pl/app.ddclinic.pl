@@ -33,6 +33,12 @@ export function AppNavigation({
         label="O aplikacji"
         onClick={handleClick}
       />
+      <NavLink
+        component={Link}
+        to="/vacation"
+        label="Wniosek urlopowy"
+        onClick={handleClick}
+      />
     </nav>
   );
 }

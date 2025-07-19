@@ -1,14 +1,17 @@
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  HeadContent,
+  Outlet,
+} from "@tanstack/react-router";
 import { useDisclosure } from "@mantine/hooks";
 import { AppShell } from "@mantine/core";
-import { ReactNode } from "react";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import type { QueryClient } from "@tanstack/react-query";
-import { ErrorBoundary } from "react-error-boundary";
-import { ErrorScreen } from "../components/ErrorScreen.tsx";
 import { NotFoundScreen } from "../components/NotFoundScreen.tsx";
 import { AppHeader } from "../components/AppHeader.tsx";
 import { AppNavigation } from "../components/AppNavigation.tsx";
+import { ErrorScreen } from "../components/ErrorScreen.tsx";
+import { ReactNode } from "react";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -17,11 +20,17 @@ interface RouterContext {
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <Layout>
+      <HeadContent />
       <Outlet />
       <TanStackRouterDevtools />
     </Layout>
   ),
   notFoundComponent: NotFoundScreen,
+  errorComponent: ({ error }) => (
+    <Layout>
+      <ErrorScreen error={error} />
+    </Layout>
+  ),
 });
 
 function Layout({ children }: { children: ReactNode }) {
@@ -53,9 +62,7 @@ function Layout({ children }: { children: ReactNode }) {
           toggleDesktop={toggleDesktop}
         />
       </AppShell.Navbar>
-      <AppShell.Main>
-        <ErrorBoundary fallbackRender={ErrorScreen}>{children}</ErrorBoundary>
-      </AppShell.Main>
+      <AppShell.Main>{children}</AppShell.Main>
     </AppShell>
   );
 }

@@ -8,6 +8,13 @@ import { AppointmentsTimeline } from "../components/AppointmentsTimeline.tsx";
 export const Route = createFileRoute("/")({
   component: MyAppointments,
   pendingComponent: FullScreenLoader,
+  head: () => ({
+    meta: [
+      {
+        title: "Moje wizyty",
+      },
+    ],
+  }),
 });
 
 function MyAppointments() {

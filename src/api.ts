@@ -24,7 +24,7 @@ axios.interceptors.response.use(
 
 export const getAppointments = (date: string) =>
   queryOptions({
-    queryKey: ["appointments"],
+    queryKey: ["appointments", date],
     queryFn: async (): Promise<Appointment[]> => {
       return await axios
         .get<Appointment[]>(`/appointments?date=${date}`)
@@ -35,6 +35,8 @@ export const getAppointments = (date: string) =>
 export const getUsers = () =>
   queryOptions({
     queryKey: ["users"],
+    staleTime: 0,
+    retryOnMount: true,
     queryFn: async (): Promise<User[]> => {
       return await axios
         .get<User[]>(`/users`)

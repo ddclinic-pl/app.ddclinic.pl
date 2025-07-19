@@ -3,6 +3,9 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/charts/styles.css";
+import "@mantine/dates/styles.css";
+
 import { ColorSchemeScript, createTheme, MantineProvider } from "@mantine/core";
 import {
   ClerkProvider,
@@ -12,6 +15,8 @@ import {
 } from "@clerk/clerk-react";
 import App from "./App.tsx";
 import { Notifications } from "@mantine/notifications";
+import { DatesProvider } from "@mantine/dates";
+import "dayjs/locale/pl";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -20,7 +25,21 @@ if (!PUBLISHABLE_KEY) {
 }
 
 const theme = createTheme({
-  primaryColor: "gray",
+  colors: {
+    gold: [
+      "#fcf6e8",
+      "#f1eadb",
+      "#dfd3bb",
+      "#ccba98",
+      "#bca579",
+      "#b29866",
+      "#ae915a",
+      "#987e4a",
+      "#886f3f",
+      "#766031",
+    ],
+  },
+  primaryColor: "gold",
 });
 
 createRoot(document.getElementById("root")!).render(
@@ -32,8 +51,10 @@ createRoot(document.getElementById("root")!).render(
       <SignedIn>
         <ColorSchemeScript defaultColorScheme="auto" />
         <MantineProvider theme={theme} defaultColorScheme="auto">
-          <App />
-          <Notifications />
+          <DatesProvider settings={{ locale: "pl" }}>
+            <App />
+            <Notifications />
+          </DatesProvider>
         </MantineProvider>
       </SignedIn>
     </ClerkProvider>
