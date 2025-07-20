@@ -26,7 +26,7 @@ export function AppHeader({
           visibleFrom="sm"
           size="sm"
         />
-        <Image src="/logo.svg" height={24} />
+        <Image src="/logo.svg" w="auto" h={24} />
       </Group>
       <UserButton />
     </Group>

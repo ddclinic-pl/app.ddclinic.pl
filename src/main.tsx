@@ -5,7 +5,6 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/charts/styles.css";
 import "@mantine/dates/styles.css";
-
 import { ColorSchemeScript, createTheme, MantineProvider } from "@mantine/core";
 import {
   ClerkProvider,
@@ -13,10 +12,13 @@ import {
   SignedIn,
   SignedOut,
 } from "@clerk/clerk-react";
-import App from "./App.tsx";
 import { Notifications } from "@mantine/notifications";
 import { DatesProvider } from "@mantine/dates";
 import "dayjs/locale/pl";
+import { ModalsProvider } from "@mantine/modals";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { routeTree } from "./routeTree.gen.ts";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -42,6 +44,45 @@ const theme = createTheme({
   primaryColor: "gold",
 });
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
+// Create a new app instance
+const app = createRouter({
+  routeTree,
+  context: {
+    queryClient,
+  },
+  // defaultPreload: "intent",
+  // Since we're using React Query, we don't want loader calls to ever be stale
+  // This will ensure that the loader is always called when the route is preloaded or visited
+  defaultPreloadStaleTime: 0,
+  scrollRestoration: true,
+});
+
+// Register the app instance for type safety
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof app;
+  }
+}
+
+// Extend the window object to include Clerk session token retrieval
+declare global {
+  interface Window {
+    Clerk: {
+      session: {
+        getToken: ({ template }: { template: string }) => Promise<string>;
+      };
+    };
+  }
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
@@ -49,13 +90,17 @@ createRoot(document.getElementById("root")!).render(
         <RedirectToSignIn />
       </SignedOut>
       <SignedIn>
-        <ColorSchemeScript defaultColorScheme="auto" />
-        <MantineProvider theme={theme} defaultColorScheme="auto">
-          <DatesProvider settings={{ locale: "pl" }}>
-            <App />
-            <Notifications />
-          </DatesProvider>
-        </MantineProvider>
+        <QueryClientProvider client={queryClient}>
+          <ColorSchemeScript defaultColorScheme="auto" />
+          <MantineProvider theme={theme} defaultColorScheme="auto">
+            <DatesProvider settings={{ locale: "pl" }}>
+              <ModalsProvider>
+                <RouterProvider router={app} />
+              </ModalsProvider>
+              <Notifications />
+            </DatesProvider>
+          </MantineProvider>
+        </QueryClientProvider>
       </SignedIn>
     </ClerkProvider>
   </StrictMode>,

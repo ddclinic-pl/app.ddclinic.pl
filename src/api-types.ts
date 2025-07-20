@@ -10,6 +10,14 @@
  * ---------------------------------------------------------------
  */
 
+export interface ApplicationUser {
+  displayName: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  plmedId: string;
+}
+
 export interface Appointment {
   /** @format date */
   date: string;
@@ -24,9 +32,24 @@ export interface AppointmentPatient {
   lastName: string;
 }
 
-export interface User {
+export interface CreateUserRequest {
+  /** @minLength 1 */
+  email: string;
+  /** @minLength 1 */
+  firstName: string;
+  /** @minLength 1 */
+  lastName: string;
+  /** @minLength 1 */
+  phoneNumber: string;
+  /** @minLength 1 */
+  plmedId: string;
+  /** @minLength 1 */
+  role: "ADMIN" | "DOCTOR" | "ASSISTANT" | "RECEPTIONIST";
+}
+
+export interface PlmedUser {
   displayName: string;
-  email?: string;
+  id: string;
 }
 
 export interface UserId {
