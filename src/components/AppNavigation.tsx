@@ -29,6 +29,18 @@ export function AppNavigation({
       />
       <NavLink
         component={Link}
+        to="/patients"
+        label="Pacjenci"
+        onClick={handleClick}
+      />
+      <NavLink
+        component={Link}
+        to="/incidents"
+        label="Awarie"
+        onClick={handleClick}
+      />
+      <NavLink
+        component={Link}
         to="/about"
         label="O aplikacji"
         onClick={handleClick}

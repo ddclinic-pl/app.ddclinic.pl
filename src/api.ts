@@ -2,10 +2,12 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query";
 import axios from "axios";
 import { notifications } from "@mantine/notifications";
 import {
-  ApplicationUser,
+  ApplicationUserResponse,
   Appointment,
-  CreateUserRequest,
-  PlmedUser,
+  CreateAccountRequest,
+  InternalUserResponse,
+  Patient,
+  PatientSearchResultItemResponse,
 } from "./api-types.ts";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_DDCLINIC;
@@ -43,16 +45,16 @@ export const getUsers = () =>
     queryKey: ["users"],
     staleTime: 0,
     retryOnMount: true,
-    queryFn: async (): Promise<ApplicationUser[]> => {
+    queryFn: async (): Promise<ApplicationUserResponse[]> => {
       return await axios
-        .get<ApplicationUser[]>(`/users`)
+        .get<ApplicationUserResponse[]>(`/users`)
         .then((response) => response.data);
     },
   });
 
 export const createApplicationUser = () =>
   mutationOptions({
-    mutationFn: async (createUserRequest: CreateUserRequest) => {
+    mutationFn: async (createUserRequest: CreateAccountRequest) => {
       await axios.post(`/users`, createUserRequest);
     },
     onSuccess: () => {
@@ -64,14 +66,42 @@ export const createApplicationUser = () =>
     },
   });
 
-export const getPlmedUsers = () =>
+export const getInternalUsers = () =>
   queryOptions({
-    queryKey: ["plmed", "users"],
+    queryKey: ["internal", "users"],
     staleTime: 0,
     retryOnMount: true,
-    queryFn: async (): Promise<PlmedUser[]> => {
+    queryFn: async (): Promise<InternalUserResponse[]> => {
       return await axios
-        .get<PlmedUser[]>(`/plmed/users`)
+        .get<InternalUserResponse[]>(`/internal/users`)
+        .then((response) => response.data);
+    },
+  });
+
+export const getPatients = (query: string) =>
+  queryOptions({
+    queryKey: ["patients", query],
+    staleTime: 0,
+    retryOnMount: true,
+    enabled: !!query && query.length > 2,
+    queryFn: async (): Promise<PatientSearchResultItemResponse[]> => {
+      return await axios
+        .get<
+          PatientSearchResultItemResponse[]
+        >(`/patients?query=${encodeURIComponent(query)}`)
+        .then((response) => response.data);
+    },
+  });
+
+export const getPatient = (id: string | null) =>
+  queryOptions({
+    queryKey: ["patient", id],
+    staleTime: 0,
+    retryOnMount: true,
+    enabled: !!id,
+    queryFn: async (): Promise<Patient> => {
+      return await axios
+        .get<Patient>(`/patients/${encodeURIComponent(id!)}`)
         .then((response) => response.data);
     },
   });

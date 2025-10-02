@@ -13,6 +13,10 @@ import { Route as VacationRouteImport } from './routes/vacation'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
+import { Route as PatientsIndexRouteImport } from './routes/patients/index'
+import { Route as IncidentsIndexRouteImport } from './routes/incidents/index'
+import { Route as IncidentsEquipmentRouteImport } from './routes/incidents/equipment'
+import { Route as IncidentsComputersRouteImport } from './routes/incidents/computers'
 
 const VacationRoute = VacationRouteImport.update({
   id: '/vacation',
@@ -34,17 +38,45 @@ const UsersIndexRoute = UsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientsIndexRoute = PatientsIndexRouteImport.update({
+  id: '/patients/',
+  path: '/patients/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IncidentsIndexRoute = IncidentsIndexRouteImport.update({
+  id: '/incidents/',
+  path: '/incidents/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IncidentsEquipmentRoute = IncidentsEquipmentRouteImport.update({
+  id: '/incidents/equipment',
+  path: '/incidents/equipment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IncidentsComputersRoute = IncidentsComputersRouteImport.update({
+  id: '/incidents/computers',
+  path: '/incidents/computers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/vacation': typeof VacationRoute
+  '/incidents/computers': typeof IncidentsComputersRoute
+  '/incidents/equipment': typeof IncidentsEquipmentRoute
+  '/incidents': typeof IncidentsIndexRoute
+  '/patients': typeof PatientsIndexRoute
   '/users': typeof UsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/vacation': typeof VacationRoute
+  '/incidents/computers': typeof IncidentsComputersRoute
+  '/incidents/equipment': typeof IncidentsEquipmentRoute
+  '/incidents': typeof IncidentsIndexRoute
+  '/patients': typeof PatientsIndexRoute
   '/users': typeof UsersIndexRoute
 }
 export interface FileRoutesById {
@@ -52,20 +84,53 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/vacation': typeof VacationRoute
+  '/incidents/computers': typeof IncidentsComputersRoute
+  '/incidents/equipment': typeof IncidentsEquipmentRoute
+  '/incidents/': typeof IncidentsIndexRoute
+  '/patients/': typeof PatientsIndexRoute
   '/users/': typeof UsersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/vacation' | '/users'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/vacation'
+    | '/incidents/computers'
+    | '/incidents/equipment'
+    | '/incidents'
+    | '/patients'
+    | '/users'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/vacation' | '/users'
-  id: '__root__' | '/' | '/about' | '/vacation' | '/users/'
+  to:
+    | '/'
+    | '/about'
+    | '/vacation'
+    | '/incidents/computers'
+    | '/incidents/equipment'
+    | '/incidents'
+    | '/patients'
+    | '/users'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/vacation'
+    | '/incidents/computers'
+    | '/incidents/equipment'
+    | '/incidents/'
+    | '/patients/'
+    | '/users/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   VacationRoute: typeof VacationRoute
+  IncidentsComputersRoute: typeof IncidentsComputersRoute
+  IncidentsEquipmentRoute: typeof IncidentsEquipmentRoute
+  IncidentsIndexRoute: typeof IncidentsIndexRoute
+  PatientsIndexRoute: typeof PatientsIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
 }
 
@@ -99,6 +164,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patients/': {
+      id: '/patients/'
+      path: '/patients'
+      fullPath: '/patients'
+      preLoaderRoute: typeof PatientsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/incidents/': {
+      id: '/incidents/'
+      path: '/incidents'
+      fullPath: '/incidents'
+      preLoaderRoute: typeof IncidentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/incidents/equipment': {
+      id: '/incidents/equipment'
+      path: '/incidents/equipment'
+      fullPath: '/incidents/equipment'
+      preLoaderRoute: typeof IncidentsEquipmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/incidents/computers': {
+      id: '/incidents/computers'
+      path: '/incidents/computers'
+      fullPath: '/incidents/computers'
+      preLoaderRoute: typeof IncidentsComputersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -106,6 +199,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   VacationRoute: VacationRoute,
+  IncidentsComputersRoute: IncidentsComputersRoute,
+  IncidentsEquipmentRoute: IncidentsEquipmentRoute,
+  IncidentsIndexRoute: IncidentsIndexRoute,
+  PatientsIndexRoute: PatientsIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
 }
 export const routeTree = rootRouteImport

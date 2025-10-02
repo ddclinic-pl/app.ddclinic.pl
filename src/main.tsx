@@ -55,6 +55,9 @@ const queryClient = new QueryClient({
 // Create a new app instance
 const app = createRouter({
   routeTree,
+  defaultPreload: "intent",
+  defaultStaleTime: 5000,
+  scrollRestoration: true,
   context: {
     queryClient,
   },
@@ -62,7 +65,6 @@ const app = createRouter({
   // Since we're using React Query, we don't want loader calls to ever be stale
   // This will ensure that the loader is always called when the route is preloaded or visited
   defaultPreloadStaleTime: 0,
-  scrollRestoration: true,
 });
 
 // Register the app instance for type safety

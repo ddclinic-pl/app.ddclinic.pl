@@ -14,8 +14,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import FullScreenLoader from "../../components/FullScreenLoader.tsx";
 import { getUsers } from "../../api.ts";
 import { modals } from "@mantine/modals";
-import { AddUserForm } from "./AddUserForm.tsx";
-import { ApplicationUser } from "../../api-types.ts";
+import { AddUserForm } from "./-components/AddUserForm.tsx";
 import {
   IconDotsVertical,
   IconLock,
@@ -23,6 +22,7 @@ import {
   IconRefresh,
   IconTrash,
 } from "@tabler/icons-react";
+import { ApplicationUserResponse } from "../../api-types.ts";
 
 export const Route = createFileRoute("/users/")({
   component: Users,
@@ -61,9 +61,9 @@ function Users() {
   );
 }
 
-export function UsersRolesTable({ data }: { data: ApplicationUser[] }) {
+export function UsersRolesTable({ data }: { data: ApplicationUserResponse[] }) {
   const rows = data.map((item) => (
-    <Table.Tr key={item.displayName}>
+    <Table.Tr key={item.id}>
       <Table.Td>
         <Group gap="sm">
           <Avatar size={40} radius={40} name={item.displayName} />

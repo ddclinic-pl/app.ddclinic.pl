@@ -1,9 +1,9 @@
 import { useForm } from "@mantine/form";
 import { Button, Group, Select, Stack, TextInput } from "@mantine/core";
-import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { createApplicationUser, getPlmedUsers } from "../../api.ts";
-import { useMemo } from "react";
-import { CreateUserRequest } from "../../api-types.ts";
+import { useMutation } from "@tanstack/react-query";
+import { createApplicationUser } from "../../../api.ts";
+import { CreateAccountRequest } from "../../../api-types.ts";
+import InternalAccountPicker from "../../../components/InternalAccountPicker.tsx";
 
 export function AddUserForm({
   onCancel,
@@ -12,32 +12,22 @@ export function AddUserForm({
   onCancel: () => void;
   onSubmit: () => void;
 }) {
-  const plMedUsers = useSuspenseQuery(getPlmedUsers());
   const createAccount = useMutation(createApplicationUser());
-
-  const plmedidOptions = useMemo(
-    () =>
-      plMedUsers.data.map((user) => ({
-        value: user.id,
-        label: user.displayName,
-      })),
-    [plMedUsers.data],
-  );
-
-  const form = useForm<CreateUserRequest>({
+  const form = useForm<CreateAccountRequest>({
     initialValues: {
       firstName: "",
       lastName: "",
       email: "",
       phoneNumber: "",
       role: "ASSISTANT",
-      plmedId: "",
+      referenceUserId: "",
     },
 
     validate: {
       role: (value) => (value ? null : "Role is required"),
       phoneNumber: (value) => (value ? null : "Phone number is required"),
-      plmedId: (value) => (value ? null : "PLMED account is required"),
+      referenceUserId: (value) =>
+        value ? null : "referenceUserId account is required",
     },
   });
 
@@ -53,6 +43,19 @@ export function AddUserForm({
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack>
+        <InternalAccountPicker
+          onChange={(account) => {
+            form.setFieldValue("referenceUserId", account.id);
+            form.setFieldValue("firstName", account.firstName);
+            form.setFieldValue("lastName", account.lastName);
+            if (account.phoneNumber) {
+              form.setFieldValue("phoneNumber", account.phoneNumber);
+            }
+            if (account.email) {
+              form.setFieldValue("email", account.email);
+            }
+          }}
+        />
         <TextInput
           label="Imię"
           placeholder="Jan"
@@ -94,13 +97,6 @@ export function AddUserForm({
           ]}
           placeholder="Wybierz rolę"
           {...form.getInputProps("role")}
-          required
-        />
-        <Select
-          label="Konto PLMed"
-          data={plmedidOptions}
-          placeholder="Wybierz konto PLMed"
-          {...form.getInputProps("plmedId")}
           required
         />
         <Group justify="flex-end" mt="md">

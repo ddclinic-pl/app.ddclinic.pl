@@ -12,6 +12,7 @@ import { AppHeader } from "../components/AppHeader.tsx";
 import { AppNavigation } from "../components/AppNavigation.tsx";
 import { ErrorScreen } from "../components/ErrorScreen.tsx";
 import { ReactNode } from "react";
+import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 
 interface RouterContext {
   queryClient: QueryClient;
@@ -19,11 +20,13 @@ interface RouterContext {
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
-    <Layout>
-      <HeadContent />
-      <Outlet />
-      <TanStackRouterDevtools />
-    </Layout>
+    <NuqsAdapter>
+      <Layout>
+        <HeadContent />
+        <Outlet />
+        <TanStackRouterDevtools />
+      </Layout>
+    </NuqsAdapter>
   ),
   notFoundComponent: NotFoundScreen,
   errorComponent: ({ error }) => (

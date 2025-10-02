@@ -10,12 +10,11 @@
  * ---------------------------------------------------------------
  */
 
-export interface ApplicationUser {
+export interface ApplicationUserResponse {
   displayName: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  plmedId: string;
+  id: string;
+  phoneNumber: PhoneNumber;
 }
 
 export interface Appointment {
@@ -32,7 +31,7 @@ export interface AppointmentPatient {
   lastName: string;
 }
 
-export interface CreateUserRequest {
+export interface CreateAccountRequest {
   /** @minLength 1 */
   email: string;
   /** @minLength 1 */
@@ -42,16 +41,50 @@ export interface CreateUserRequest {
   /** @minLength 1 */
   phoneNumber: string;
   /** @minLength 1 */
-  plmedId: string;
-  /** @minLength 1 */
+  referenceUserId: string;
   role: "ADMIN" | "DOCTOR" | "ASSISTANT" | "RECEPTIONIST";
 }
 
-export interface PlmedUser {
-  displayName: string;
+export interface DisableUserRequest {
+  /** @minLength 1 */
   id: string;
 }
 
-export interface UserId {
-  value?: string;
+export interface InternalUserResponse {
+  account: string;
+  displayName: string;
+  email?: string;
+  firstName: string;
+  id: string;
+  lastName: string;
+  phoneNumber?: string;
+}
+
+export interface Patient {
+  displayName: string;
+}
+
+export interface PatientSearchResultItemResponse {
+  displayName: string;
+  id: string;
+  phoneNumber?: PhoneNumber;
+}
+
+export interface PhoneNumber {
+  /** @format int32 */
+  countryCode?: number;
+  countryCodeSource?:
+    | "FROM_NUMBER_WITH_PLUS_SIGN"
+    | "FROM_NUMBER_WITH_IDD"
+    | "FROM_NUMBER_WITHOUT_PLUS_SIGN"
+    | "FROM_DEFAULT_COUNTRY"
+    | "UNSPECIFIED";
+  extension?: string;
+  italianLeadingZero?: boolean;
+  /** @format int64 */
+  nationalNumber?: number;
+  /** @format int32 */
+  numberOfLeadingZeros?: number;
+  preferredDomesticCarrierCode?: string;
+  rawInput?: string;
 }
