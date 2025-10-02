@@ -14,7 +14,7 @@ export interface ApplicationUserResponse {
   displayName: string;
   email: string;
   id: string;
-  phoneNumber: PhoneNumber;
+  phoneNumber: string;
 }
 
 export interface Appointment {
@@ -65,26 +65,9 @@ export interface Patient {
 }
 
 export interface PatientSearchResultItemResponse {
+  city?: string;
   displayName: string;
+  gender?: string;
   id: string;
-  phoneNumber?: PhoneNumber;
-}
-
-export interface PhoneNumber {
-  /** @format int32 */
-  countryCode?: number;
-  countryCodeSource?:
-    | "FROM_NUMBER_WITH_PLUS_SIGN"
-    | "FROM_NUMBER_WITH_IDD"
-    | "FROM_NUMBER_WITHOUT_PLUS_SIGN"
-    | "FROM_DEFAULT_COUNTRY"
-    | "UNSPECIFIED";
-  extension?: string;
-  italianLeadingZero?: boolean;
-  /** @format int64 */
-  nationalNumber?: number;
-  /** @format int32 */
-  numberOfLeadingZeros?: number;
-  preferredDomesticCarrierCode?: string;
-  rawInput?: string;
+  phoneNumber?: string;
 }
