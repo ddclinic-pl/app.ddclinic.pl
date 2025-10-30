@@ -16,9 +16,10 @@ import { Notifications } from "@mantine/notifications";
 import { DatesProvider } from "@mantine/dates";
 import "dayjs/locale/pl";
 import { ModalsProvider } from "@mantine/modals";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen.ts";
+import { queryClient } from "./queryClient.ts";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -44,27 +45,18 @@ const theme = createTheme({
   primaryColor: "gold",
 });
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
 // Create a new app instance
 const app = createRouter({
   routeTree,
-  defaultPreload: "intent",
-  defaultStaleTime: 5000,
-  scrollRestoration: true,
   context: {
     queryClient,
   },
-  // defaultPreload: "intent",
+  defaultStaleTime: 5000,
+  defaultPreload: "intent",
   // Since we're using React Query, we don't want loader calls to ever be stale
   // This will ensure that the loader is always called when the route is preloaded or visited
   defaultPreloadStaleTime: 0,
+  scrollRestoration: true,
 });
 
 // Register the app instance for type safety

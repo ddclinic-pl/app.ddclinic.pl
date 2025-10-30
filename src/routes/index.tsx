@@ -1,13 +1,25 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Stack, Title } from "@mantine/core";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Group, Image, Stack, Text, Title } from "@mantine/core";
 import { getAppointments } from "../api.ts";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import FullScreenLoader from "../components/FullScreenLoader.tsx";
 import { AppointmentsTimeline } from "../components/AppointmentsTimeline.tsx";
+import { queryClient } from "../queryClient.ts";
+import dayjs from "dayjs";
+import { DatePickerInput } from "@mantine/dates";
+import { IconCalendar } from "@tabler/icons-react";
+import { Appointment } from "../api-types.ts";
 
 export const Route = createFileRoute("/")({
   component: MyAppointments,
   pendingComponent: FullScreenLoader,
+  validateSearch: (search) => ({
+    date: dayjs().format("YYYY-MM-DD"),
+    ...search,
+  }),
+  loaderDeps: (context) => ({ date: context.search.date }),
+  loader: (context) =>
+    queryClient.ensureQueryData(getAppointments(context.deps.date)),
   head: () => ({
     meta: [
       {
@@ -18,11 +30,41 @@ export const Route = createFileRoute("/")({
 });
 
 function MyAppointments() {
-  const appointmentsQuery = useSuspenseQuery(getAppointments("2024-03-20"));
+  const { date } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const appointmentsQuery = useSuspenseQuery(getAppointments(date));
   return (
     <Stack>
-      <Title size="xl">Twoje wizyty</Title>
-      <AppointmentsTimeline appointments={appointmentsQuery.data} />
+      <Group justify="space-between">
+        <Title size="xl">Moje wizyty</Title>
+        <DatePickerInput
+          leftSection={<IconCalendar size={18} stroke={1.5} />}
+          leftSectionPointerEvents="none"
+          value={date}
+          onChange={(date) =>
+            navigate({
+              search: (prev) => ({ ...prev, date: date || "" }),
+            })
+          }
+          dropdownType="modal"
+          valueFormat="YYYY-MM-DD"
+        />
+      </Group>
+      <Appointments appointments={appointmentsQuery.data} />
+    </Stack>
+  );
+}
+
+function Appointments({ appointments }: { appointments: Appointment[] }) {
+  if (appointments.length == 0) return <NoAppointments />;
+  return <AppointmentsTimeline appointments={appointments} />;
+}
+
+function NoAppointments() {
+  return (
+    <Stack mt="25%" p="md" gap={20} align="center" justify="center">
+      <Image src="/undraw_hot-air-balloon_6knx.svg" />
+      <Text size="md">Brak wizyt</Text>
     </Stack>
   );
 }

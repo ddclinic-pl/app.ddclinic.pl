@@ -3,7 +3,7 @@ import { Button, Group, Select, Stack, TextInput } from "@mantine/core";
 import { useMutation } from "@tanstack/react-query";
 import { createApplicationUser } from "../../../api.ts";
 import { CreateAccountRequest } from "../../../api-types.ts";
-import InternalAccountPicker from "../../../components/InternalAccountPicker.tsx";
+import InternalAccountPicker from "./InternalAccountPicker.tsx";
 
 export function AddUserForm({
   onCancel,

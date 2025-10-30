@@ -60,14 +60,16 @@ export interface InternalUserResponse {
   phoneNumber?: string;
 }
 
-export interface Patient {
+export interface PatientResponse {
+  city?: string;
   displayName: string;
+  id: string;
+  phoneNumber?: string;
 }
 
 export interface PatientSearchResultItemResponse {
   city?: string;
   displayName: string;
-  gender?: string;
   id: string;
   phoneNumber?: string;
 }

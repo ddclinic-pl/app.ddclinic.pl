@@ -1,5 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
+  ActionIcon,
+  Anchor,
   Avatar,
   Box,
   Group,
@@ -10,11 +12,11 @@ import {
   Title,
 } from "@mantine/core";
 import { getPatients } from "../../api.ts";
-import { useQuery } from "@tanstack/react-query";
 import { PatientSearchResultItemResponse } from "../../api-types.ts";
 import { useState } from "react";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconAt, IconPhoneCall } from "@tabler/icons-react";
+import { IconChevronRight, IconHome, IconPhoneCall } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/patients/")({
   component: PatientsBrowse,
@@ -44,7 +46,7 @@ function PatientsBrowse() {
         <Stack gap="sm">
           <Title size="xl">Wyszukaj pacjenta</Title>
           <Input
-            placeholder="Input component"
+            placeholder="Jan Kowalski"
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
@@ -65,12 +67,13 @@ function PatientSearchResults({
   patients?: PatientSearchResultItemResponse[];
   isLoading: boolean;
 }) {
+  const navigate = useNavigate();
   if (isLoading) return <Loader />;
   return (
     <Stack>
       {patients.map((patient) => {
         return (
-          <Group wrap="nowrap">
+          <Group wrap="nowrap" key={patient.id}>
             <Avatar size={80} radius="md" />
             <Box>
               <Text fz="lg" fw={500}>
@@ -78,18 +81,33 @@ function PatientSearchResults({
               </Text>
 
               <Group wrap="nowrap" gap={10} mt={3}>
-                <IconAt stroke={1.5} size={16} />
-                <Text fz="xs" c="dimmed">
-                  {patient.phoneNumber}
-                </Text>
+                <IconPhoneCall stroke={1.5} size={16} />
+                <Anchor
+                  href={
+                    patient.phoneNumber
+                      ? `tel:${patient.phoneNumber}`
+                      : undefined
+                  }
+                  fz="xs"
+                >
+                  {patient.phoneNumber ? patient.phoneNumber : "Brak numeru"}
+                </Anchor>
               </Group>
 
               <Group wrap="nowrap" gap={10} mt={5}>
-                <IconPhoneCall stroke={1.5} size={16} />
+                <IconHome stroke={1.5} size={16} />
                 <Text fz="xs" c="dimmed">
                   {patient.city}
                 </Text>
               </Group>
+            </Box>
+            <Box flex="1" display="flex" style={{ justifyContent: "flex-end" }}>
+              <ActionIcon
+                variant="transparent"
+                onClick={() => navigate({ to: `/patients/${patient.id}` })}
+              >
+                <IconChevronRight />
+              </ActionIcon>
             </Box>
           </Group>
         );

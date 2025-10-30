@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Box, SegmentedControl, Stack, Text, Title } from "@mantine/core";
 import { useState } from "react";
-import { ComputerIncidentForm } from "./computers.tsx";
-import { EquipmentIncidentForm } from "./equipment.tsx";
+import { ComputerIncidentForm } from "./-components/computers.tsx";
+import { EquipmentIncidentForm } from "./-components/equipment.tsx";
 
 export const Route = createFileRoute("/incidents/")({
   component: IncidentsPage,

@@ -1,7 +1,7 @@
 import { Loader, Select } from "@mantine/core";
 import { useQuery } from "@tanstack/react-query";
-import { getInternalUsers } from "../api.ts";
-import { InternalUserResponse } from "../api-types.ts";
+import { InternalUserResponse } from "../../../api-types.ts";
+import { getInternalUsers } from "../../../api.ts";
 
 export default function InternalAccountPicker({
   onChange,

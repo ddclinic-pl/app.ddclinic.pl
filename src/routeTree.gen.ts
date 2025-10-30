@@ -15,8 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as PatientsIndexRouteImport } from './routes/patients/index'
 import { Route as IncidentsIndexRouteImport } from './routes/incidents/index'
-import { Route as IncidentsEquipmentRouteImport } from './routes/incidents/equipment'
-import { Route as IncidentsComputersRouteImport } from './routes/incidents/computers'
+import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
 
 const VacationRoute = VacationRouteImport.update({
   id: '/vacation',
@@ -48,14 +47,9 @@ const IncidentsIndexRoute = IncidentsIndexRouteImport.update({
   path: '/incidents/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IncidentsEquipmentRoute = IncidentsEquipmentRouteImport.update({
-  id: '/incidents/equipment',
-  path: '/incidents/equipment',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IncidentsComputersRoute = IncidentsComputersRouteImport.update({
-  id: '/incidents/computers',
-  path: '/incidents/computers',
+const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
+  id: '/patients/$patientId',
+  path: '/patients/$patientId',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -63,8 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/vacation': typeof VacationRoute
-  '/incidents/computers': typeof IncidentsComputersRoute
-  '/incidents/equipment': typeof IncidentsEquipmentRoute
+  '/patients/$patientId': typeof PatientsPatientIdRoute
   '/incidents': typeof IncidentsIndexRoute
   '/patients': typeof PatientsIndexRoute
   '/users': typeof UsersIndexRoute
@@ -73,8 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/vacation': typeof VacationRoute
-  '/incidents/computers': typeof IncidentsComputersRoute
-  '/incidents/equipment': typeof IncidentsEquipmentRoute
+  '/patients/$patientId': typeof PatientsPatientIdRoute
   '/incidents': typeof IncidentsIndexRoute
   '/patients': typeof PatientsIndexRoute
   '/users': typeof UsersIndexRoute
@@ -84,8 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/vacation': typeof VacationRoute
-  '/incidents/computers': typeof IncidentsComputersRoute
-  '/incidents/equipment': typeof IncidentsEquipmentRoute
+  '/patients/$patientId': typeof PatientsPatientIdRoute
   '/incidents/': typeof IncidentsIndexRoute
   '/patients/': typeof PatientsIndexRoute
   '/users/': typeof UsersIndexRoute
@@ -96,8 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/vacation'
-    | '/incidents/computers'
-    | '/incidents/equipment'
+    | '/patients/$patientId'
     | '/incidents'
     | '/patients'
     | '/users'
@@ -106,8 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/vacation'
-    | '/incidents/computers'
-    | '/incidents/equipment'
+    | '/patients/$patientId'
     | '/incidents'
     | '/patients'
     | '/users'
@@ -116,8 +105,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/vacation'
-    | '/incidents/computers'
-    | '/incidents/equipment'
+    | '/patients/$patientId'
     | '/incidents/'
     | '/patients/'
     | '/users/'
@@ -127,8 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   VacationRoute: typeof VacationRoute
-  IncidentsComputersRoute: typeof IncidentsComputersRoute
-  IncidentsEquipmentRoute: typeof IncidentsEquipmentRoute
+  PatientsPatientIdRoute: typeof PatientsPatientIdRoute
   IncidentsIndexRoute: typeof IncidentsIndexRoute
   PatientsIndexRoute: typeof PatientsIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
@@ -178,18 +165,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IncidentsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/incidents/equipment': {
-      id: '/incidents/equipment'
-      path: '/incidents/equipment'
-      fullPath: '/incidents/equipment'
-      preLoaderRoute: typeof IncidentsEquipmentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/incidents/computers': {
-      id: '/incidents/computers'
-      path: '/incidents/computers'
-      fullPath: '/incidents/computers'
-      preLoaderRoute: typeof IncidentsComputersRouteImport
+    '/patients/$patientId': {
+      id: '/patients/$patientId'
+      path: '/patients/$patientId'
+      fullPath: '/patients/$patientId'
+      preLoaderRoute: typeof PatientsPatientIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -199,8 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   VacationRoute: VacationRoute,
-  IncidentsComputersRoute: IncidentsComputersRoute,
-  IncidentsEquipmentRoute: IncidentsEquipmentRoute,
+  PatientsPatientIdRoute: PatientsPatientIdRoute,
   IncidentsIndexRoute: IncidentsIndexRoute,
   PatientsIndexRoute: PatientsIndexRoute,
   UsersIndexRoute: UsersIndexRoute,

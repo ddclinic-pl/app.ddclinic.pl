@@ -6,9 +6,10 @@ import {
   Appointment,
   CreateAccountRequest,
   InternalUserResponse,
-  Patient,
+  PatientResponse,
   PatientSearchResultItemResponse,
 } from "./api-types.ts";
+import { queryClient } from "./queryClient.ts";
 
 axios.defaults.baseURL = import.meta.env.VITE_API_DDCLINIC;
 
@@ -78,20 +79,25 @@ export const getInternalUsers = () =>
     },
   });
 
-export const getPatients = (query: string) =>
-  queryOptions({
+export const getPatients = (query: string) => {
+  return queryOptions({
     queryKey: ["patients", query],
     staleTime: 0,
     retryOnMount: true,
     enabled: !!query && query.length > 2,
     queryFn: async (): Promise<PatientSearchResultItemResponse[]> => {
-      return await axios
+      const results = await axios
         .get<
           PatientSearchResultItemResponse[]
         >(`/patients?query=${encodeURIComponent(query)}`)
         .then((response) => response.data);
+      results.forEach((patient) => {
+        queryClient.setQueryData(["patient", patient.id], patient);
+      });
+      return results;
     },
   });
+};
 
 export const getPatient = (id: string | null) =>
   queryOptions({
@@ -99,9 +105,9 @@ export const getPatient = (id: string | null) =>
     staleTime: 0,
     retryOnMount: true,
     enabled: !!id,
-    queryFn: async (): Promise<Patient> => {
+    queryFn: async (): Promise<PatientResponse> => {
       return await axios
-        .get<Patient>(`/patients/${encodeURIComponent(id!)}`)
+        .get<PatientResponse>(`/patients/${encodeURIComponent(id!)}`)
         .then((response) => response.data);
     },
   });

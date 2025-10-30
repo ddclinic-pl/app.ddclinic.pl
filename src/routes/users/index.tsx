@@ -23,10 +23,12 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { ApplicationUserResponse } from "../../api-types.ts";
+import { queryClient } from "../../queryClient.ts";
 
 export const Route = createFileRoute("/users/")({
   component: Users,
   pendingComponent: FullScreenLoader,
+  loader: () => queryClient.ensureQueryData(getUsers()),
 });
 
 function Users() {

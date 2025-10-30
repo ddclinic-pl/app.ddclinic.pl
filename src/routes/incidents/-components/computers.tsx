@@ -1,4 +1,3 @@
-import { createFileRoute } from "@tanstack/react-router";
 import {
   Button,
   Select,
@@ -9,13 +8,6 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-
-export const Route = createFileRoute("/incidents/computers")({
-  component: ComputerIncidentForm,
-  head: () => ({
-    meta: [{ title: "Awarie – Komputery" }],
-  }),
-});
 
 interface ComputerIncidentValues {
   title: string;
