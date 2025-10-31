@@ -65,7 +65,7 @@ function Layout({ children }: { children: ReactNode }) {
           toggleDesktop={toggleDesktop}
         />
       </AppShell.Navbar>
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main style={{ height: "100dvh" }}>{children}</AppShell.Main>
     </AppShell>
   );
 }

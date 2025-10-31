@@ -11,7 +11,6 @@ import {
   Title,
 } from "@mantine/core";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import FullScreenLoader from "../../components/FullScreenLoader.tsx";
 import { getUsers } from "../../api.ts";
 import { modals } from "@mantine/modals";
 import { AddUserForm } from "./-components/AddUserForm.tsx";
@@ -27,7 +26,6 @@ import { queryClient } from "../../queryClient.ts";
 
 export const Route = createFileRoute("/users/")({
   component: Users,
-  pendingComponent: FullScreenLoader,
   loader: () => queryClient.ensureQueryData(getUsers()),
 });
 

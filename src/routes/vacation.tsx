@@ -72,78 +72,72 @@ function VacationRequestForm() {
   };
 
   return (
-    <Stack h="100%" justify="space-between">
+    <Stack>
       <Box>
         <Title order={3}>Twój stan urlopowy</Title>
         <Text size="md" mt={5}>
           Do wykorzystania masz jeszcze: <strong>26 dni</strong> urlopu
         </Text>
       </Box>
-      <Box>
-        <form onSubmit={form.onSubmit(onSubmit)}>
-          <Stack>
-            <EmployeePicker
-              inputProps={{ ...form.getInputProps("employee") }}
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        <Stack>
+          <EmployeePicker inputProps={{ ...form.getInputProps("employee") }} />
+          <Select
+            label="Rodzaj urlopu"
+            placeholder="Wybierz rodzaj urlopu"
+            withAsterisk
+            data={[
+              { value: "wypoczynkowy", label: "wypoczynkowy" },
+              { value: "okolicznościowy", label: "okolicznościowy" },
+              { value: "na żądanie", label: "na żądanie" },
+              { value: "bezpłatny", label: "bezpłatny" },
+            ]}
+            {...form.getInputProps("vacationType")}
+          />
+          <Box>
+            <Text size="sm" fw={500} mb={3}>
+              Data rozpoczęcia urlopu
+              {form.errors.startDate && (
+                <Text span c="red" size="xs" ml={5}>
+                  {form.errors.startDate}
+                </Text>
+              )}
+            </Text>
+            <DatePickerInput
+              value={form.values.date}
+              firstDayOfWeek={1}
+              weekendDays={[0, 6]}
+              size="sm"
+              type="range"
+              {...form.getInputProps("date")}
             />
-            <Select
-              label="Rodzaj urlopu"
-              placeholder="Wybierz rodzaj urlopu"
-              withAsterisk
-              data={[
-                { value: "wypoczynkowy", label: "wypoczynkowy" },
-                { value: "okolicznościowy", label: "okolicznościowy" },
-                { value: "na żądanie", label: "na żądanie" },
-                { value: "bezpłatny", label: "bezpłatny" },
-              ]}
-              {...form.getInputProps("vacationType")}
-            />
-            <Box>
-              <Text size="sm" fw={500} mb={3}>
-                Data rozpoczęcia urlopu
-                {form.errors.startDate && (
-                  <Text span c="red" size="xs" ml={5}>
-                    {form.errors.startDate}
-                  </Text>
-                )}
-              </Text>
-              <DatePickerInput
-                value={form.values.date}
-                firstDayOfWeek={1}
-                weekendDays={[0, 6]}
-                size="sm"
-                type="range"
-                {...form.getInputProps("date")}
-              />
-            </Box>
-            <TextInput
-              label="Osoba zastępująca"
-              placeholder="Imię Nazwisko"
-              withAsterisk
-              {...form.getInputProps("substitute")}
-            />
-            <Textarea
-              label="Komentarz"
-              placeholder="Dodatkowe informacje"
-              {...form.getInputProps("comment")}
-            />
-            <Alert icon={<IconInfoCircle size={16} />} variant="light">
-              <Text size="sm">
-                Wybrana liczba dni na urlopie: {selectedDays}
-              </Text>
-            </Alert>
-            <Alert icon={<IconInfoCircle size={16} />} variant="light">
-              <Text size="sm">
-                Dni wolne od pracy: 1 stycznia, 6 stycznia, 20 kwietnia, 21
-                kwietnia, 1 maja, 3 maja, 26 maja, 8 czerwca, 19 czerwca, 15
-                sierpnia, 1 listopada, 11 listopada, 25 grudnia, 26 grudnia
-              </Text>
-            </Alert>
-            <Button fullWidth size="md" type="submit">
-              WYŚLIJ
-            </Button>
-          </Stack>
-        </form>
-      </Box>
+          </Box>
+          <TextInput
+            label="Osoba zastępująca"
+            placeholder="Imię Nazwisko"
+            withAsterisk
+            {...form.getInputProps("substitute")}
+          />
+          <Textarea
+            label="Komentarz"
+            placeholder="Dodatkowe informacje"
+            {...form.getInputProps("comment")}
+          />
+          <Alert icon={<IconInfoCircle size={16} />} variant="light">
+            <Text size="sm">Wybrana liczba dni na urlopie: {selectedDays}</Text>
+          </Alert>
+          <Alert icon={<IconInfoCircle size={16} />} variant="light">
+            <Text size="sm">
+              Dni wolne od pracy: 1 stycznia, 6 stycznia, 20 kwietnia, 21
+              kwietnia, 1 maja, 3 maja, 26 maja, 8 czerwca, 19 czerwca, 15
+              sierpnia, 1 listopada, 11 listopada, 25 grudnia, 26 grudnia
+            </Text>
+          </Alert>
+          <Button fullWidth size="md" type="submit">
+            WYŚLIJ
+          </Button>
+        </Stack>
+      </form>
     </Stack>
   );
 }

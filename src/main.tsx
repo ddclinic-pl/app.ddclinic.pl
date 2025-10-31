@@ -5,7 +5,12 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/charts/styles.css";
 import "@mantine/dates/styles.css";
-import { ColorSchemeScript, createTheme, MantineProvider } from "@mantine/core";
+import {
+  ColorSchemeScript,
+  createTheme,
+  MantineProvider,
+  Stack,
+} from "@mantine/core";
 import {
   ClerkProvider,
   RedirectToSignIn,
@@ -20,6 +25,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen.ts";
 import { queryClient } from "./queryClient.ts";
+import FullScreenLoader from "./components/FullScreenLoader.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -43,6 +49,13 @@ const theme = createTheme({
     ],
   },
   primaryColor: "gold",
+  components: {
+    Stack: Stack.extend({
+      defaultProps: {
+        h: "100%",
+      },
+    }),
+  },
 });
 
 // Create a new app instance
@@ -51,7 +64,7 @@ const app = createRouter({
   context: {
     queryClient,
   },
-  defaultStaleTime: 5000,
+  defaultPendingComponent: FullScreenLoader,
   defaultPreload: "intent",
   // Since we're using React Query, we don't want loader calls to ever be stale
   // This will ensure that the loader is always called when the route is preloaded or visited

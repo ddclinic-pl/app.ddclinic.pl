@@ -79,7 +79,7 @@ export const getInternalUsers = () =>
     },
   });
 
-export const getPatients = (query: string) => {
+export const getPatients = (query: string = "") => {
   return queryOptions({
     queryKey: ["patients", query],
     staleTime: 0,

@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { getPatient } from "../../api.ts";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   Accordion,
+  ActionIcon,
   Anchor,
   Avatar,
   Box,
@@ -12,6 +13,7 @@ import {
 } from "@mantine/core";
 import {
   IconCameraSelfie,
+  IconChevronLeft,
   IconHome,
   IconPhoneCall,
   IconPhoto,
@@ -27,6 +29,7 @@ export const Route = createFileRoute("/patients/$patientId")({
 
 function PatientDetails() {
   const id = Route.useParams().patientId;
+  const router = useRouter();
   const { data: patient } = useSuspenseQuery(getPatient(id));
   return (
     <Stack>
@@ -50,6 +53,19 @@ function PatientDetails() {
               {patient.city}
             </Text>
           </Group>
+        </Box>
+        <Box
+          flex="1"
+          display="flex"
+          h="80px"
+          style={{ justifyContent: "flex-end", alignItems: "center" }}
+        >
+          <ActionIcon
+            variant="transparent"
+            onClick={() => router.history.back()}
+          >
+            <IconChevronLeft />
+          </ActionIcon>
         </Box>
       </Group>
 
