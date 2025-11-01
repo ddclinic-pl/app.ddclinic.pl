@@ -56,6 +56,13 @@ export function AppNavigation({
           onClick={handleClick}
           leftSection={<IconCalendarSmile size={16} stroke={1.5} />}
         />
+        <NavLink
+          component={Link}
+          to="/attendance"
+          label="Moje godziny pracy"
+          onClick={handleClick}
+          leftSection={<IconCalendarSmile size={16} stroke={1.5} />}
+        />
         <CollapsableLink label="Administracja">
           <NavLink
             component={Link}
