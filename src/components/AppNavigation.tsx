@@ -95,8 +95,6 @@ function CollapsableLink({
   return (
     <Box flex="1">
       <NavLink
-        component={Link}
-        to={label}
         label={label}
         onClick={() => handlers.toggle()}
         leftSection={<IconGauge size={16} stroke={1.5} />}
