@@ -31,7 +31,7 @@ axios.interceptors.response.use(
   },
 );
 
-export const getAppointments = (date: string) =>
+export const getMyAppointments = (date: string) =>
   queryOptions({
     queryKey: ["appointments", date],
     queryFn: async (): Promise<Appointment[]> => {
@@ -70,8 +70,6 @@ export const createApplicationUser = () =>
 export const getInternalUsers = () =>
   queryOptions({
     queryKey: ["internal", "users"],
-    staleTime: 0,
-    retryOnMount: true,
     queryFn: async (): Promise<InternalUserResponse[]> => {
       return await axios
         .get<InternalUserResponse[]>(`/internal/users`)
@@ -82,8 +80,6 @@ export const getInternalUsers = () =>
 export const getPatients = (query: string = "") => {
   return queryOptions({
     queryKey: ["patients", query],
-    staleTime: 0,
-    retryOnMount: true,
     enabled: !!query && query.length > 2,
     queryFn: async (): Promise<PatientSearchResultItemResponse[]> => {
       const results = await axios
@@ -102,12 +98,45 @@ export const getPatients = (query: string = "") => {
 export const getPatient = (id: string | null) =>
   queryOptions({
     queryKey: ["patient", id],
-    staleTime: 0,
-    retryOnMount: true,
     enabled: !!id,
     queryFn: async (): Promise<PatientResponse> => {
       return await axios
         .get<PatientResponse>(`/patients/${encodeURIComponent(id!)}`)
+        .then((response) => response.data);
+    },
+  });
+
+export const getPatientAppointments = (id: string | null) =>
+  queryOptions({
+    queryKey: ["patient", id, "appointments"],
+    enabled: !!id,
+    queryFn: async (): Promise<Appointment[]> => {
+      return await axios
+        .get<
+          Appointment[]
+        >(`/appointments?patientId=${encodeURIComponent(id!)}`)
+        .then((response) => response.data);
+    },
+  });
+
+export const getPatientPhotos = (id: string | null) =>
+  queryOptions({
+    queryKey: ["patient", id, "photos"],
+    enabled: !!id,
+    queryFn: async (): Promise<PatientResponse> => {
+      return await axios
+        .get<PatientResponse>(`/patients/${encodeURIComponent(id!)}/photos`)
+        .then((response) => response.data);
+    },
+  });
+
+export const getPatientFiles = (id: string | null) =>
+  queryOptions({
+    queryKey: ["patient", id, "files"],
+    enabled: !!id,
+    queryFn: async (): Promise<PatientResponse> => {
+      return await axios
+        .get<PatientResponse>(`/patients/${encodeURIComponent(id!)}/files`)
         .then((response) => response.data);
     },
   });

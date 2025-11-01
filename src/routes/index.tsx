@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Group, Stack, Title } from "@mantine/core";
-import { getAppointments } from "../api.ts";
+import { getMyAppointments } from "../api.ts";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { AppointmentsTimeline } from "../components/AppointmentsTimeline.tsx";
 import { queryClient } from "../queryClient.ts";
@@ -13,7 +13,7 @@ import BottomImage from "../components/BottomImage.tsx";
 function MyAppointments() {
   const { date } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
-  const appointmentsQuery = useSuspenseQuery(getAppointments(date));
+  const appointmentsQuery = useSuspenseQuery(getMyAppointments(date));
   return (
     <Stack>
       <Group justify="space-between">
@@ -60,7 +60,7 @@ export const Route = createFileRoute("/")({
   }),
   loaderDeps: (context) => ({ date: context.search.date }),
   loader: (context) =>
-    queryClient.ensureQueryData(getAppointments(context.deps.date)),
+    queryClient.ensureQueryData(getMyAppointments(context.deps.date)),
   head: () => ({
     meta: [
       {

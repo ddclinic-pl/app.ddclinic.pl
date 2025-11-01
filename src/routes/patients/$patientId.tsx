@@ -14,11 +14,16 @@ import {
 import {
   IconCameraSelfie,
   IconChevronLeft,
+  IconFile,
   IconHome,
   IconPhoneCall,
   IconPhoto,
   IconPrinter,
 } from "@tabler/icons-react";
+import AppointmentsHistory from "./-components/AppointmentsHistory.tsx";
+import TreatmentPlans from "./-components/TreatmentPlans";
+import PatientPhotos from "./-components/PatientPhotos.tsx";
+import PatientFiles from "./-components/PatientFiles.tsx";
 
 export const Route = createFileRoute("/patients/$patientId")({
   component: PatientDetails,
@@ -82,7 +87,9 @@ function PatientDetails() {
           >
             Planowane wizyty
           </Accordion.Control>
-          <Accordion.Panel>Content</Accordion.Panel>
+          <Accordion.Panel>
+            <AppointmentsHistory id={patient.id} filter="planned" />
+          </Accordion.Panel>
         </Accordion.Item>
 
         <Accordion.Item value="historia-wizyt">
@@ -97,7 +104,9 @@ function PatientDetails() {
           >
             Historia wizyt
           </Accordion.Control>
-          <Accordion.Panel>Content</Accordion.Panel>
+          <Accordion.Panel>
+            <AppointmentsHistory id={patient.id} filter="past" />
+          </Accordion.Panel>
         </Accordion.Item>
 
         <Accordion.Item value="plan-leczenia">
@@ -112,7 +121,9 @@ function PatientDetails() {
           >
             Plany leczenia
           </Accordion.Control>
-          <Accordion.Panel>Content</Accordion.Panel>
+          <Accordion.Panel>
+            <TreatmentPlans />
+          </Accordion.Panel>
         </Accordion.Item>
 
         <Accordion.Item value="zdjecia">
@@ -127,7 +138,26 @@ function PatientDetails() {
           >
             Zdjęcia
           </Accordion.Control>
-          <Accordion.Panel>Content</Accordion.Panel>
+          <Accordion.Panel>
+            <PatientPhotos id={patient.id} />
+          </Accordion.Panel>
+        </Accordion.Item>
+
+        <Accordion.Item value="pliki">
+          <Accordion.Control
+            icon={
+              <IconFile
+                size={22}
+                stroke={1.5}
+                color="var(--mantine-color-dimmed)"
+              />
+            }
+          >
+            Pliki
+          </Accordion.Control>
+          <Accordion.Panel>
+            <PatientFiles id={patient.id} />
+          </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
     </Stack>
