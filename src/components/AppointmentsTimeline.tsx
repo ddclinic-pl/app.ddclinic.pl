@@ -1,4 +1,4 @@
-import { Appointment } from "../api-types.ts";
+import { AppointmentResponse } from "../api-types.ts";
 import {
   ActionIcon,
   Group,
@@ -10,7 +10,7 @@ import {
 import { IconBell, IconCalendar, IconHistory } from "@tabler/icons-react";
 
 interface AppointmentTimelineProps {
-  appointments: Appointment[];
+  appointments: AppointmentResponse[];
 }
 
 export function AppointmentsTimeline({

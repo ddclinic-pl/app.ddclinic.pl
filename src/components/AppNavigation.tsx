@@ -5,6 +5,7 @@ import {
   IconCalendar,
   IconCalendarSmile,
   IconChevronRight,
+  IconClockCheck,
   IconFriends,
   IconGauge,
   IconInfoCircle,
@@ -63,6 +64,15 @@ export function AppNavigation({
           onClick={handleClick}
           leftSection={<IconCalendarSmile size={16} stroke={1.5} />}
         />
+        <CollapsableLink label="Menadżer">
+          <NavLink
+            component={Link}
+            to="/users"
+            label="Godziny pracy"
+            onClick={handleClick}
+            leftSection={<IconClockCheck size={16} stroke={1.5} />}
+          />
+        </CollapsableLink>
         <CollapsableLink label="Administracja">
           <NavLink
             component={Link}

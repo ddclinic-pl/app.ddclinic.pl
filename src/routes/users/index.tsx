@@ -10,7 +10,6 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { getUsers } from "../../api.ts";
 import { modals } from "@mantine/modals";
 import { AddUserForm } from "./-components/AddUserForm.tsx";
@@ -30,7 +29,7 @@ export const Route = createFileRoute("/users/")({
 });
 
 function Users() {
-  const usersQuery = useSuspenseQuery(getUsers());
+  const users = Route.useLoaderData();
   return (
     <Stack>
       <Group justify="space-between">
@@ -56,7 +55,7 @@ function Users() {
           />
         </ActionIcon>
       </Group>
-      <UsersRolesTable data={usersQuery.data} />
+      <UsersRolesTable data={users} />
     </Stack>
   );
 }

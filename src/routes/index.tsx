@@ -1,19 +1,36 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Group, Stack, Title } from "@mantine/core";
 import { getMyAppointments } from "../api.ts";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { AppointmentsTimeline } from "../components/AppointmentsTimeline.tsx";
 import { queryClient } from "../queryClient.ts";
 import dayjs from "dayjs";
 import { DatePickerInput } from "@mantine/dates";
 import { IconCalendar } from "@tabler/icons-react";
-import { Appointment } from "../api-types.ts";
+import { AppointmentResponse } from "../api-types.ts";
 import BottomImage from "../components/BottomImage.tsx";
+
+export const Route = createFileRoute("/")({
+  component: MyAppointments,
+  validateSearch: (search) => ({
+    date: dayjs().format("YYYY-MM-DD"),
+    ...search,
+  }),
+  loaderDeps: (context) => ({ date: context.search.date }),
+  loader: (context) =>
+    queryClient.ensureQueryData(getMyAppointments(context.deps.date)),
+  head: () => ({
+    meta: [
+      {
+        title: "Moje wizyty",
+      },
+    ],
+  }),
+});
 
 function MyAppointments() {
   const { date } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
-  const appointmentsQuery = useSuspenseQuery(getMyAppointments(date));
+  const appointments = Route.useLoaderData();
   return (
     <Stack>
       <Group justify="space-between">
@@ -33,12 +50,16 @@ function MyAppointments() {
           valueFormat="YYYY-MM-DD"
         />
       </Group>
-      <Appointments appointments={appointmentsQuery.data} />
+      <Appointments appointments={appointments} />
     </Stack>
   );
 }
 
-function Appointments({ appointments }: { appointments: Appointment[] }) {
+function Appointments({
+  appointments,
+}: {
+  appointments: AppointmentResponse[];
+}) {
   if (appointments.length == 0) return <NoAppointments />;
   return <AppointmentsTimeline appointments={appointments} />;
 }
@@ -51,21 +72,3 @@ function NoAppointments() {
     />
   );
 }
-
-export const Route = createFileRoute("/")({
-  component: MyAppointments,
-  validateSearch: (search) => ({
-    date: dayjs().format("YYYY-MM-DD"),
-    ...search,
-  }),
-  loaderDeps: (context) => ({ date: context.search.date }),
-  loader: (context) =>
-    queryClient.ensureQueryData(getMyAppointments(context.deps.date)),
-  head: () => ({
-    meta: [
-      {
-        title: "Moje wizyty",
-      },
-    ],
-  }),
-});

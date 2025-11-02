@@ -17,20 +17,18 @@ export interface ApplicationUserResponse {
   phoneNumber: string;
 }
 
-export interface Appointment {
+export interface AppointmentPatientResponse {
+  firstName: string;
+  lastName: string;
+}
+
+export interface AppointmentResponse {
   /** @format date */
   date: string;
   endTime: string;
   notes: string;
-  patient?: AppointmentPatient;
-  /** @format int32 */
-  patientId?: number;
+  patient?: AppointmentPatientResponse;
   startTime: string;
-}
-
-export interface AppointmentPatient {
-  firstName: string;
-  lastName: string;
 }
 
 export interface AttendanceLogResponse {
@@ -97,6 +95,18 @@ export interface OrderItem {
   productName: string;
   /** @format int32 */
   quantity?: number;
+}
+
+export interface PatientAppointmentResponse {
+  /** @format date */
+  date: string;
+  endTime: string;
+  notes: string;
+  startTime: string;
+}
+
+export interface PatientFileResponse {
+  id: string;
 }
 
 export interface PatientPhotoResponse {

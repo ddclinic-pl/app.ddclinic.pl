@@ -1,11 +1,16 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { getPatient } from "../../api.ts";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+  getPatient,
+  getPatientAppointments,
+  getPatientFiles,
+  getPatientPhotos,
+} from "../../api.ts";
 import {
   Accordion,
   ActionIcon,
   Anchor,
   Avatar,
+  Badge,
   Box,
   Group,
   Stack,
@@ -18,24 +23,36 @@ import {
   IconHome,
   IconPhoneCall,
   IconPhoto,
-  IconPrinter,
 } from "@tabler/icons-react";
-import AppointmentsHistory from "./-components/AppointmentsHistory.tsx";
-import TreatmentPlans from "./-components/TreatmentPlans";
+import PatientAppointments from "./-components/PatientAppointments.tsx";
 import PatientPhotos from "./-components/PatientPhotos.tsx";
 import PatientFiles from "./-components/PatientFiles.tsx";
+import { queryClient } from "../../queryClient.ts";
+import dayjs from "dayjs";
 
 export const Route = createFileRoute("/patients/$patientId")({
   component: PatientDetails,
+  loader: (context) => {
+    const id = context.params.patientId;
+    return Promise.all([
+      queryClient.ensureQueryData(getPatient(id)),
+      queryClient.ensureQueryData(getPatientAppointments(id)),
+      queryClient.ensureQueryData(getPatientPhotos(id)),
+      queryClient.ensureQueryData(getPatientFiles(id)),
+    ]);
+  },
   head: () => ({
     meta: [{ title: "Pacjent" }],
   }),
 });
 
 function PatientDetails() {
-  const id = Route.useParams().patientId;
   const router = useRouter();
-  const { data: patient } = useSuspenseQuery(getPatient(id));
+  const [patient, appointments, photos, files] = Route.useLoaderData();
+  const groupedAppointments = Object.groupBy(appointments, ({ date }) =>
+    dayjs(date).isBefore(dayjs()) ? "past" : "planned",
+  );
+
   return (
     <Stack>
       <Group wrap="nowrap">
@@ -77,6 +94,7 @@ function PatientDetails() {
       <Accordion radius="md">
         <Accordion.Item value="planowane-wizyty">
           <Accordion.Control
+            disabled={!groupedAppointments.planned?.length}
             icon={
               <IconPhoto
                 size={22}
@@ -85,15 +103,19 @@ function PatientDetails() {
               />
             }
           >
-            Planowane wizyty
+            <Group justify="space-between" pr="sm">
+              <Text>Planowane wizyty</Text>
+              <Counter value={groupedAppointments.planned?.length} />
+            </Group>
           </Accordion.Control>
           <Accordion.Panel>
-            <AppointmentsHistory id={patient.id} filter="planned" />
+            <PatientAppointments appointments={groupedAppointments.planned} />
           </Accordion.Panel>
         </Accordion.Item>
 
         <Accordion.Item value="historia-wizyt">
           <Accordion.Control
+            disabled={!groupedAppointments.past?.length}
             icon={
               <IconPhoto
                 size={22}
@@ -102,32 +124,19 @@ function PatientDetails() {
               />
             }
           >
-            Historia wizyt
+            <Group justify="space-between" pr="sm">
+              <Text>Historia wizyt</Text>
+              <Counter value={groupedAppointments.past?.length} />
+            </Group>
           </Accordion.Control>
           <Accordion.Panel>
-            <AppointmentsHistory id={patient.id} filter="past" />
-          </Accordion.Panel>
-        </Accordion.Item>
-
-        <Accordion.Item value="plan-leczenia">
-          <Accordion.Control
-            icon={
-              <IconPrinter
-                size={22}
-                stroke={1.5}
-                color="var(--mantine-color-dimmed)"
-              />
-            }
-          >
-            Plany leczenia
-          </Accordion.Control>
-          <Accordion.Panel>
-            <TreatmentPlans />
+            <PatientAppointments appointments={groupedAppointments.past} />
           </Accordion.Panel>
         </Accordion.Item>
 
         <Accordion.Item value="zdjecia">
           <Accordion.Control
+            disabled={!photos.length}
             icon={
               <IconCameraSelfie
                 size={22}
@@ -136,15 +145,19 @@ function PatientDetails() {
               />
             }
           >
-            Zdjęcia
+            <Group justify="space-between" pr="sm">
+              <Text>Zdjęcia</Text>
+              <Counter value={photos.length} />
+            </Group>
           </Accordion.Control>
           <Accordion.Panel>
-            <PatientPhotos id={patient.id} />
+            <PatientPhotos photos={photos} />
           </Accordion.Panel>
         </Accordion.Item>
 
         <Accordion.Item value="pliki">
           <Accordion.Control
+            disabled={!files.length}
             icon={
               <IconFile
                 size={22}
@@ -153,13 +166,24 @@ function PatientDetails() {
               />
             }
           >
-            Pliki
+            <Group justify="space-between" pr="sm">
+              <Text>Pliki</Text>
+              <Counter value={files.length} />
+            </Group>
           </Accordion.Control>
           <Accordion.Panel>
-            <PatientFiles id={patient.id} />
+            <PatientFiles files={files} />
           </Accordion.Panel>
         </Accordion.Item>
       </Accordion>
     </Stack>
+  );
+}
+
+function Counter({ value = 0 }: { value?: number }) {
+  return (
+    <Badge variant="light" size="sm">
+      {value}
+    </Badge>
   );
 }
