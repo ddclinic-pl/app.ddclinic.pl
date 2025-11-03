@@ -19,6 +19,7 @@ export interface ApplicationUserResponse {
 
 export interface AppointmentPatientResponse {
   firstName: string;
+  id: string;
   lastName: string;
 }
 

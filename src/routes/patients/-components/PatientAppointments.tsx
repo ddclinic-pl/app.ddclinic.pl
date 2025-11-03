@@ -1,4 +1,4 @@
-import { Group, Stack, Text } from "@mantine/core";
+import { Blockquote, Group, Stack, Text } from "@mantine/core";
 import { IconCalendar, IconClock } from "@tabler/icons-react";
 import { PatientAppointmentResponse } from "../../../api-types.ts";
 
@@ -8,7 +8,7 @@ export default function PatientAppointments({
   appointments?: PatientAppointmentResponse[];
 }) {
   return (
-    <Stack>
+    <Stack ml="xs">
       {appointments.map((appointment) => (
         <Stack gap={4}>
           <Group
@@ -35,9 +35,13 @@ export default function PatientAppointments({
               </Text>
             </Group>
           </Group>
-          <Text size="xs" c="dimmed">
-            {appointment.notes}
-          </Text>
+          {appointment.notes && (
+            <Blockquote color="gray" radius="xs" mt="sm" p="sm">
+              <Text size="xs" style={{ textWrap: "balance" }}>
+                {appointment.notes}
+              </Text>
+            </Blockquote>
+          )}
         </Stack>
       ))}
     </Stack>

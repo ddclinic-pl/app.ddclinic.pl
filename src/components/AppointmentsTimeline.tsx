@@ -7,7 +7,8 @@ import {
   ThemeIcon,
   Timeline,
 } from "@mantine/core";
-import { IconBell, IconCalendar, IconHistory } from "@tabler/icons-react";
+import { IconBell, IconCalendar, IconUserSearch } from "@tabler/icons-react";
+import { useNavigate } from "@tanstack/react-router";
 
 interface AppointmentTimelineProps {
   appointments: AppointmentResponse[];
@@ -16,6 +17,7 @@ interface AppointmentTimelineProps {
 export function AppointmentsTimeline({
   appointments,
 }: AppointmentTimelineProps) {
+  const navigate = useNavigate();
   return (
     <Timeline
       reverseActive
@@ -42,8 +44,14 @@ export function AppointmentsTimeline({
                   {appointment.startTime} - {appointment.endTime}
                 </Text>
               </Stack>
-              <ActionIcon variant="transparent" aria-label="Historia wizyt">
-                <IconHistory />
+              <ActionIcon
+                variant="transparent"
+                aria-label="Historia wizyt"
+                onClick={() =>
+                  navigate({ to: `/patients/${appointment.patient?.id}` })
+                }
+              >
+                <IconUserSearch />
               </ActionIcon>
             </Group>
           </Timeline.Item>

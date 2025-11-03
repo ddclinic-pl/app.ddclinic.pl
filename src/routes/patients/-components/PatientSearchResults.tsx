@@ -31,9 +31,17 @@ export function PatientSearchResults({
       {patients.map((patient) => {
         return (
           <Group wrap="nowrap" key={patient.id}>
-            <Avatar size={80} radius="md" />
+            <Avatar
+              size={80}
+              radius="md"
+              onClick={() => navigate({ to: `/patients/${patient.id}` })}
+            />
             <Box>
-              <Text fz="md" fw={500}>
+              <Text
+                fz="md"
+                fw={500}
+                onClick={() => navigate({ to: `/patients/${patient.id}` })}
+              >
                 {patient.displayName}
               </Text>
 
