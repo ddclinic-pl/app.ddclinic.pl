@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import TanStackRouterVite from "@tanstack/router-plugin/vite";
+import { vitePluginVersionMark } from "vite-plugin-version-mark";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vite.dev/config/
@@ -48,6 +49,12 @@ export default defineConfig({
     }),
     TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
     react(),
+    vitePluginVersionMark({
+      ifShortSHA: true,
+      ifMeta: false,
+      ifLog: false,
+      ifGlobal: true,
+    }),
   ],
   resolve: {
     alias: {

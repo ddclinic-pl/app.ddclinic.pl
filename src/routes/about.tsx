@@ -8,6 +8,9 @@ export const Route = createFileRoute("/about")({
 function About() {
   return (
     <Stack>
+      <Text>
+        Wersja: <strong>{__APP_DDCLINIC_PL_VERSION__}</strong>
+      </Text>
       <Paper withBorder radius="md" p="md">
         <Group>
           <Avatar alt="Bartosz Gałek" radius="xl">

@@ -67,6 +67,25 @@ export interface CreateOrderRequest {
   items: CreateOrderItemRequest[];
 }
 
+export interface CreateTodoRequest {
+  assignedToRole?:
+    | "ADMIN"
+    | "DOCTOR"
+    | "ASSISTANT"
+    | "RECEPTIONIST"
+    | "WAREHOUSE";
+  assignedToUserId?: string;
+  context: "PATIENT" | "REMINDER" | "RULE";
+  description?: string;
+  /** @format date */
+  dueDate?: string;
+  /** @format int32 */
+  patientId?: number;
+  recurrenceRule?: RecurrenceRule;
+  /** @minLength 1 */
+  title: string;
+}
+
 export interface DisableUserRequest {
   /** @minLength 1 */
   id: string;
@@ -106,6 +125,7 @@ export interface PatientAppointmentResponse {
 }
 
 export interface PatientFileResponse {
+  fileName: string;
   id: string;
 }
 
@@ -134,9 +154,64 @@ export interface PatientSearchResultItemResponse {
   phoneNumber?: string;
 }
 
+export interface RecurrenceRule {
+  /** @uniqueItems true */
+  daysOfWeek?: (
+    | "MONDAY"
+    | "TUESDAY"
+    | "WEDNESDAY"
+    | "THURSDAY"
+    | "FRIDAY"
+    | "SATURDAY"
+    | "SUNDAY"
+  )[];
+}
+
 export interface RfidAttendanceRequest {
   rfidCardId: string;
   type: "ENTRY" | "EXIT";
+}
+
+export interface TaskSuggestion {
+  description?: string;
+  priority?: string;
+}
+
+export interface Todo {
+  assignedToRole?:
+    | "ADMIN"
+    | "DOCTOR"
+    | "ASSISTANT"
+    | "RECEPTIONIST"
+    | "WAREHOUSE";
+  assignedToUserId?: string;
+  /** @format date-time */
+  completedAt?: string;
+  completedBy?: string;
+  context: "PATIENT" | "REMINDER" | "RULE";
+  /** @format date-time */
+  createdAt: string;
+  createdBy: string;
+  description?: string;
+  /** @format date */
+  dueDate?: string;
+  id: string;
+  /** @format int32 */
+  patientId?: number;
+  recurrenceRule?: RecurrenceRule;
+  status: "PENDING" | "COMPLETED" | "CANCELLED";
+  title: string;
+  /** @format date-time */
+  updatedAt?: string;
+}
+
+export interface TreatmentPlanResponse {
+  fileName: string;
+  id: string;
+  patientId: string;
+  taskSuggestions: TaskSuggestion[];
+  /** @format date-time */
+  uploadedAt: string;
 }
 
 export interface UpdateManagerRequest {
@@ -145,6 +220,10 @@ export interface UpdateManagerRequest {
 
 export interface UpdateOrderStatusRequest {
   status: "PENDING" | "ORDERED" | "DELIVERED" | "CANCELLED";
+}
+
+export interface UpdateTodoStatusRequest {
+  status: "PENDING" | "COMPLETED" | "CANCELLED";
 }
 
 export interface WarehouseOrder {
