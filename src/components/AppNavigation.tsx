@@ -2,10 +2,12 @@ import { Box, Collapse, NavLink, ScrollArea } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import {
   IconAlertCircle,
+  IconBox,
   IconCalendar,
   IconCalendarSmile,
   IconChevronRight,
   IconClockCheck,
+  IconExclamationCircle,
   IconFriends,
   IconGauge,
   IconInfoCircle,
@@ -64,7 +66,36 @@ export function AppNavigation({
           onClick={handleClick}
           leftSection={<IconCalendarSmile size={16} stroke={1.5} />}
         />
-        <CollapsableLink label="Menadżer">
+        <CollapsableLink
+          label="Magazyn"
+          icon={<IconBox size={16} stroke={1.5} />}
+        >
+          <NavLink
+            component={Link}
+            to="/warehouse/new-order"
+            label="Nowe zamówienie"
+            onClick={handleClick}
+            leftSection={<IconExclamationCircle size={16} stroke={1.5} />}
+          />
+          <NavLink
+            component={Link}
+            to="/warehouse/orders"
+            label="Moje zamówienia"
+            onClick={handleClick}
+            leftSection={<IconExclamationCircle size={16} stroke={1.5} />}
+          />
+          <NavLink
+            component={Link}
+            to="/warehouse/summary"
+            label="Przegląd magazynu"
+            onClick={handleClick}
+            leftSection={<IconExclamationCircle size={16} stroke={1.5} />}
+          />
+        </CollapsableLink>
+        <CollapsableLink
+          label="Menadżer"
+          icon={<IconGauge size={16} stroke={1.5} />}
+        >
           <NavLink
             component={Link}
             to="/users"
@@ -73,7 +104,10 @@ export function AppNavigation({
             leftSection={<IconClockCheck size={16} stroke={1.5} />}
           />
         </CollapsableLink>
-        <CollapsableLink label="Administracja">
+        <CollapsableLink
+          label="Administracja"
+          icon={<IconGauge size={16} stroke={1.5} />}
+        >
           <NavLink
             component={Link}
             to="/users"
@@ -97,7 +131,9 @@ export function AppNavigation({
 function CollapsableLink({
   children,
   label,
+  icon,
 }: {
+  icon: ReactElement;
   children: ReactElement | ReactElement[];
   label: string;
 }) {
@@ -107,7 +143,7 @@ function CollapsableLink({
       <NavLink
         label={label}
         onClick={() => handlers.toggle()}
-        leftSection={<IconGauge size={16} stroke={1.5} />}
+        leftSection={icon}
         rightSection={
           <IconChevronRight
             size={12}

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Box, Input, Stack, Title } from "@mantine/core";
+import { Box, Input, ScrollArea, Stack, Title } from "@mantine/core";
 import { getPatients } from "../../api.ts";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { useSuspenseQuery } from "@tanstack/react-query";
@@ -63,11 +63,13 @@ function PatientsBrowse() {
           />
         </Stack>
       </Box>
-      <PatientSearchResults
-        query={query}
-        isLoading={patientsQuery.isLoading}
-        patients={patientsQuery.data}
-      />
+      <ScrollArea h="100%">
+        <PatientSearchResults
+          query={query}
+          isLoading={patientsQuery.isLoading}
+          patients={patientsQuery.data}
+        />
+      </ScrollArea>
     </Stack>
   );
 }

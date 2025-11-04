@@ -72,14 +72,14 @@ function VacationRequestForm() {
   };
 
   return (
-    <Stack>
-      <Box>
-        <Title order={3}>Twój stan urlopowy</Title>
-        <Text size="md" mt={5}>
-          Do wykorzystania masz jeszcze: <strong>26 dni</strong> urlopu
-        </Text>
-      </Box>
-      <form onSubmit={form.onSubmit(onSubmit)}>
+    <form style={{ height: "100%" }} onSubmit={form.onSubmit(onSubmit)}>
+      <Stack justify="space-between">
+        <Box>
+          <Title order={3}>Twój stan urlopowy</Title>
+          <Text size="md" mt={5}>
+            Do wykorzystania masz jeszcze: <strong>26 dni</strong> urlopu
+          </Text>
+        </Box>
         <Stack>
           <EmployeePicker inputProps={{ ...form.getInputProps("employee") }} />
           <Select
@@ -133,11 +133,11 @@ function VacationRequestForm() {
               sierpnia, 1 listopada, 11 listopada, 25 grudnia, 26 grudnia
             </Text>
           </Alert>
-          <Button fullWidth size="md" type="submit">
-            WYŚLIJ
-          </Button>
         </Stack>
-      </form>
-    </Stack>
+        <Button fullWidth type="submit">
+          Wyślij
+        </Button>
+      </Stack>
+    </form>
   );
 }

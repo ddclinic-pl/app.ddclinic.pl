@@ -16,6 +16,9 @@ import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as PatientsIndexRouteImport } from './routes/patients/index'
 import { Route as IncidentsIndexRouteImport } from './routes/incidents/index'
 import { Route as AttendanceIndexRouteImport } from './routes/attendance/index'
+import { Route as WarehouseSummaryRouteImport } from './routes/warehouse/summary'
+import { Route as WarehouseOrdersRouteImport } from './routes/warehouse/orders'
+import { Route as WarehouseNewOrderRouteImport } from './routes/warehouse/new-order'
 import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
 
 const VacationRoute = VacationRouteImport.update({
@@ -53,6 +56,21 @@ const AttendanceIndexRoute = AttendanceIndexRouteImport.update({
   path: '/attendance/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WarehouseSummaryRoute = WarehouseSummaryRouteImport.update({
+  id: '/warehouse/summary',
+  path: '/warehouse/summary',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WarehouseOrdersRoute = WarehouseOrdersRouteImport.update({
+  id: '/warehouse/orders',
+  path: '/warehouse/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WarehouseNewOrderRoute = WarehouseNewOrderRouteImport.update({
+  id: '/warehouse/new-order',
+  path: '/warehouse/new-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   id: '/patients/$patientId',
   path: '/patients/$patientId',
@@ -64,6 +82,9 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/vacation': typeof VacationRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
+  '/warehouse/new-order': typeof WarehouseNewOrderRoute
+  '/warehouse/orders': typeof WarehouseOrdersRoute
+  '/warehouse/summary': typeof WarehouseSummaryRoute
   '/attendance': typeof AttendanceIndexRoute
   '/incidents': typeof IncidentsIndexRoute
   '/patients': typeof PatientsIndexRoute
@@ -74,6 +95,9 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/vacation': typeof VacationRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
+  '/warehouse/new-order': typeof WarehouseNewOrderRoute
+  '/warehouse/orders': typeof WarehouseOrdersRoute
+  '/warehouse/summary': typeof WarehouseSummaryRoute
   '/attendance': typeof AttendanceIndexRoute
   '/incidents': typeof IncidentsIndexRoute
   '/patients': typeof PatientsIndexRoute
@@ -85,6 +109,9 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/vacation': typeof VacationRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
+  '/warehouse/new-order': typeof WarehouseNewOrderRoute
+  '/warehouse/orders': typeof WarehouseOrdersRoute
+  '/warehouse/summary': typeof WarehouseSummaryRoute
   '/attendance/': typeof AttendanceIndexRoute
   '/incidents/': typeof IncidentsIndexRoute
   '/patients/': typeof PatientsIndexRoute
@@ -97,6 +124,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/vacation'
     | '/patients/$patientId'
+    | '/warehouse/new-order'
+    | '/warehouse/orders'
+    | '/warehouse/summary'
     | '/attendance'
     | '/incidents'
     | '/patients'
@@ -107,6 +137,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/vacation'
     | '/patients/$patientId'
+    | '/warehouse/new-order'
+    | '/warehouse/orders'
+    | '/warehouse/summary'
     | '/attendance'
     | '/incidents'
     | '/patients'
@@ -117,6 +150,9 @@ export interface FileRouteTypes {
     | '/about'
     | '/vacation'
     | '/patients/$patientId'
+    | '/warehouse/new-order'
+    | '/warehouse/orders'
+    | '/warehouse/summary'
     | '/attendance/'
     | '/incidents/'
     | '/patients/'
@@ -128,6 +164,9 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   VacationRoute: typeof VacationRoute
   PatientsPatientIdRoute: typeof PatientsPatientIdRoute
+  WarehouseNewOrderRoute: typeof WarehouseNewOrderRoute
+  WarehouseOrdersRoute: typeof WarehouseOrdersRoute
+  WarehouseSummaryRoute: typeof WarehouseSummaryRoute
   AttendanceIndexRoute: typeof AttendanceIndexRoute
   IncidentsIndexRoute: typeof IncidentsIndexRoute
   PatientsIndexRoute: typeof PatientsIndexRoute
@@ -185,6 +224,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AttendanceIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/warehouse/summary': {
+      id: '/warehouse/summary'
+      path: '/warehouse/summary'
+      fullPath: '/warehouse/summary'
+      preLoaderRoute: typeof WarehouseSummaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/warehouse/orders': {
+      id: '/warehouse/orders'
+      path: '/warehouse/orders'
+      fullPath: '/warehouse/orders'
+      preLoaderRoute: typeof WarehouseOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/warehouse/new-order': {
+      id: '/warehouse/new-order'
+      path: '/warehouse/new-order'
+      fullPath: '/warehouse/new-order'
+      preLoaderRoute: typeof WarehouseNewOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patients/$patientId': {
       id: '/patients/$patientId'
       path: '/patients/$patientId'
@@ -200,6 +260,9 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   VacationRoute: VacationRoute,
   PatientsPatientIdRoute: PatientsPatientIdRoute,
+  WarehouseNewOrderRoute: WarehouseNewOrderRoute,
+  WarehouseOrdersRoute: WarehouseOrdersRoute,
+  WarehouseSummaryRoute: WarehouseSummaryRoute,
   AttendanceIndexRoute: AttendanceIndexRoute,
   IncidentsIndexRoute: IncidentsIndexRoute,
   PatientsIndexRoute: PatientsIndexRoute,

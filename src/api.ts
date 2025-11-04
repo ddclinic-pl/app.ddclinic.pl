@@ -11,6 +11,8 @@ import {
   PatientPhotoResponse,
   PatientResponse,
   PatientSearchResultItemResponse,
+  WarehouseOrder,
+  WarehouseProduct,
 } from "./api-types.ts";
 import { queryClient } from "./queryClient.ts";
 
@@ -145,5 +147,76 @@ export const getPatientFiles = (id: string | null) =>
           PatientFileResponse[]
         >(`/patients/${encodeURIComponent(id!)}/files`)
         .then((response) => response.data);
+    },
+  });
+
+export const getWarehouseSummary = () =>
+  queryOptions({
+    queryKey: ["warehouse", "summary"],
+    queryFn: async (): Promise<WarehouseProduct[]> => {
+      return Promise.resolve([
+        { id: "prod-a", name: "Wiertło stomatologiczne", currentStock: 120 },
+        { id: "prod-b", name: "Płyn do dezynfekcji", currentStock: 35 },
+        { id: "prod-c", name: "Rękawiczki lateksowe", currentStock: 500 },
+        { id: "prod-d", name: "Strzykawki", currentStock: 260 },
+      ]);
+      // return await axios
+      //   .get<WarehouseProduct[]>(`/warehouse/products`)
+      //   .then((response) => response.data);
+    },
+  });
+
+export const getUserWarehouseOrders = () =>
+  queryOptions({
+    queryKey: ["warehouse", "orders"],
+    queryFn: async (): Promise<WarehouseOrder[]> => {
+      return Promise.resolve([
+        {
+          id: "2141",
+          comment: "Pilne przed zabiegiem w piątek",
+          createdAt: new Date().toISOString(),
+          items: [
+            {
+              productId: "prod-a",
+              productName: "Wiertło stomatologiczne",
+              quantity: 5,
+            },
+            {
+              productId: "prod-b",
+              productName: "Płyn do dezynfekcji",
+              quantity: 2,
+            },
+          ],
+          status: "PENDING",
+          userId: "me",
+        },
+        {
+          id: "214132",
+          comment: "Uzupełnienie zapasów",
+          createdAt: new Date().toISOString(),
+          items: [
+            {
+              productId: "prod-c",
+              productName: "Rękawiczki lateksowe",
+              quantity: 200,
+            },
+          ],
+          status: "ORDERED",
+          userId: "me",
+        },
+        {
+          id: "32141",
+          comment: "",
+          createdAt: new Date().toISOString(),
+          items: [
+            { productId: "prod-d", productName: "Strzykawki", quantity: 150 },
+          ],
+          status: "DELIVERED",
+          userId: "me",
+        },
+      ]);
+      // return await axios
+      //   .get<WarehouseProduct[]>(`/warehouse/products`)
+      //   .then((response) => response.data);
     },
   });
