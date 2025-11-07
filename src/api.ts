@@ -4,13 +4,27 @@ import { notifications } from "@mantine/notifications";
 import {
   ApplicationUserResponse,
   AppointmentResponse,
+  AttendanceLogResponse,
   CreateAccountRequest,
+  CreateOrderRequest,
+  CreateTodoRequest,
+  DisableUserRequest,
   InternalUserResponse,
+  LeaveResponse,
+  LeaveToAcceptRequest,
+  LeaveToAddRequest,
+  ManualAttendanceRequest,
   PatientAppointmentResponse,
   PatientFileResponse,
   PatientPhotoResponse,
   PatientResponse,
   PatientSearchResultItemResponse,
+  RfidAttendanceRequest,
+  Todo,
+  TreatmentPlanResponse,
+  UpdateManagerRequest,
+  UpdateOrderStatusRequest,
+  UpdateTodoStatusRequest,
   WarehouseOrder,
   WarehouseProduct,
 } from "./api-types.ts";
@@ -218,5 +232,455 @@ export const getUserWarehouseOrders = () =>
       // return await axios
       //   .get<WarehouseProduct[]>(`/warehouse/products`)
       //   .then((response) => response.data);
+    },
+  });
+
+// Warehouse Orders
+export const getAllWarehouseOrders = (status?: string) =>
+  queryOptions({
+    queryKey: ["warehouse", "orders", status],
+    queryFn: async (): Promise<WarehouseOrder[]> => {
+      const params = status ? `?status=${status}` : "";
+      return await axios
+        .get<WarehouseOrder[]>(`/warehouse/orders${params}`)
+        .then((r) => r.data);
+    },
+  });
+
+export const createWarehouseOrder = () =>
+  mutationOptions({
+    mutationFn: async (data: CreateOrderRequest) => {
+      return await axios
+        .post<WarehouseOrder>(`/warehouse/orders`, data)
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Zamówienie utworzone",
+        message: "Zamówienie magazynowe zostało pomyślnie utworzone.",
+        color: "green",
+      });
+    },
+  });
+
+export const getWarehouseOrder = (id: string) =>
+  queryOptions({
+    queryKey: ["warehouse", "order", id],
+    enabled: !!id,
+    queryFn: async (): Promise<WarehouseOrder> => {
+      return await axios
+        .get<WarehouseOrder>(`/warehouse/orders/${id}`)
+        .then((r) => r.data);
+    },
+  });
+
+export const updateWarehouseOrderStatus = () =>
+  mutationOptions({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: UpdateOrderStatusRequest;
+    }) => {
+      return await axios
+        .patch<WarehouseOrder>(`/warehouse/orders/${id}/status`, data)
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Status zamówienia zaktualizowany",
+        message: "Status zamówienia został pomyślnie zmieniony.",
+        color: "green",
+      });
+    },
+  });
+
+export const markWarehouseOrderItemDelivered = () =>
+  mutationOptions({
+    mutationFn: async ({
+      id,
+      productId,
+    }: {
+      id: string;
+      productId: string;
+    }) => {
+      return await axios
+        .patch<WarehouseOrder>(
+          `/warehouse/orders/${id}/items/${productId}/deliver`,
+        )
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Produkt oznaczony jako dostarczony",
+        message: "Produkt w zamówieniu został oznaczony jako dostarczony.",
+        color: "green",
+      });
+    },
+  });
+
+export const cancelWarehouseOrder = () =>
+  mutationOptions({
+    mutationFn: async (id: string) => {
+      return await axios
+        .patch<WarehouseOrder>(`/warehouse/orders/${id}/cancel`)
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Zamówienie anulowane",
+        message: "Zamówienie magazynowe zostało pomyślnie anulowane.",
+        color: "green",
+      });
+    },
+  });
+
+export const getAllTodos = (params?: {
+  userId?: string;
+  role?: string;
+  patientId?: number;
+  status?: string;
+}) =>
+  queryOptions({
+    queryKey: ["todos", params],
+    queryFn: async (): Promise<Todo[]> => {
+      const searchParams = new URLSearchParams();
+      if (params?.userId) searchParams.append("userId", params.userId);
+      if (params?.role) searchParams.append("role", params.role);
+      if (params?.patientId !== undefined)
+        searchParams.append("patientId", String(params.patientId));
+      if (params?.status) searchParams.append("status", params.status);
+      const query = searchParams.toString();
+      return await axios
+        .get<Todo[]>(`/todos${query ? `?${query}` : ""}`)
+        .then((r) => r.data);
+    },
+  });
+
+export const createTodo = () =>
+  mutationOptions({
+    mutationFn: async (data: CreateTodoRequest) => {
+      return await axios.post<Todo>(`/todos`, data).then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Zadanie utworzone",
+        message: "Zadanie zostało pomyślnie utworzone.",
+        color: "green",
+      });
+    },
+  });
+
+export const getTodo = (id: string) =>
+  queryOptions({
+    queryKey: ["todo", id],
+    enabled: !!id,
+    queryFn: async (): Promise<Todo> => {
+      return await axios.get<Todo>(`/todos/${id}`).then((r) => r.data);
+    },
+  });
+
+export const getMyTodos = () =>
+  queryOptions({
+    queryKey: ["todos", "my"],
+    queryFn: async (): Promise<Todo[]> => {
+      return await axios.get<Todo[]>(`/todos/my`).then((r) => r.data);
+    },
+  });
+
+export const updateTodoStatus = () =>
+  mutationOptions({
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: UpdateTodoStatusRequest;
+    }) => {
+      return await axios
+        .patch<Todo>(`/todos/${id}/status`, data)
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Status zadania zaktualizowany",
+        message: "Status zadania został pomyślnie zmieniony.",
+        color: "green",
+      });
+    },
+  });
+
+export const completeTodo = () =>
+  mutationOptions({
+    mutationFn: async (id: string) => {
+      return await axios
+        .patch<Todo>(`/todos/${id}/complete`)
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Zadanie ukończone",
+        message: "Zadanie zostało oznaczone jako ukończone.",
+        color: "green",
+      });
+    },
+  });
+
+export const getLeaves = () =>
+  queryOptions({
+    queryKey: ["leaves"],
+    queryFn: async (): Promise<LeaveResponse[]> => {
+      return await axios.get<LeaveResponse[]>(`/leave`).then((r) => r.data);
+    },
+  });
+
+export const addLeave = () =>
+  mutationOptions({
+    mutationFn: async ({
+      userId,
+      data,
+    }: {
+      userId: string;
+      data: LeaveToAddRequest;
+    }) => {
+      return await axios.post(
+        `/leave?userId=${encodeURIComponent(userId)}`,
+        data,
+      );
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Wniosek urlopowy dodany",
+        message: "Wniosek urlopowy został pomyślnie dodany.",
+        color: "green",
+      });
+    },
+  });
+
+export const acceptLeave = () =>
+  mutationOptions({
+    mutationFn: async ({
+      userId,
+      data,
+    }: {
+      userId: string;
+      data: LeaveToAcceptRequest;
+    }) => {
+      return await axios.patch(
+        `/leave?userId=${encodeURIComponent(userId)}`,
+        data,
+      );
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Wniosek urlopowy zaakceptowany",
+        message: "Wniosek urlopowy został pomyślnie zaakceptowany.",
+        color: "green",
+      });
+    },
+  });
+
+export const getLeaveTypes = () =>
+  queryOptions({
+    queryKey: ["leave", "types"],
+    queryFn: async (): Promise<string[]> => {
+      return await axios.get<string[]>(`/leave/types`).then((r) => r.data);
+    },
+  });
+
+export const getLeaveSummary = (userId: string, year: number) =>
+  queryOptions({
+    queryKey: ["leave", "summary", userId, year],
+    queryFn: async (): Promise<number> => {
+      return await axios
+        .get<number>(
+          `/leave/summary?userId=${encodeURIComponent(userId)}&year=${year}`,
+        )
+        .then((r) => r.data);
+    },
+  });
+
+export const getMyLeaves = (userId: string, year: number) =>
+  queryOptions({
+    queryKey: ["leave", "my", userId, year],
+    queryFn: async (): Promise<LeaveResponse[]> => {
+      return await axios
+        .get<
+          LeaveResponse[]
+        >(`/leave/my?userId=${encodeURIComponent(userId)}&year=${year}`)
+        .then((r) => r.data);
+    },
+  });
+
+export const getLeavesByManager = (userId: string) =>
+  queryOptions({
+    queryKey: ["leave", "employees", userId],
+    queryFn: async (): Promise<LeaveResponse[]> => {
+      return await axios
+        .get<
+          LeaveResponse[]
+        >(`/leave/employees?userId=${encodeURIComponent(userId)}`)
+        .then((r) => r.data);
+    },
+  });
+
+export const removeLeave = () =>
+  mutationOptions({
+    mutationFn: async ({
+      userId,
+      leaveId,
+    }: {
+      userId: string;
+      leaveId: string;
+    }) => {
+      return await axios.delete(
+        `/leave/${leaveId}?userId=${encodeURIComponent(userId)}`,
+      );
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Wniosek urlopowy usunięty",
+        message: "Wniosek urlopowy został pomyślnie usunięty.",
+        color: "green",
+      });
+    },
+  });
+
+export const recordRfidAttendance = () =>
+  mutationOptions({
+    mutationFn: async (data: RfidAttendanceRequest) => {
+      return await axios
+        .post<AttendanceLogResponse>(`/attendance/rfid`, data)
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Obecność RFID zarejestrowana",
+        message: "Obecność została pomyślnie zarejestrowana przez RFID.",
+        color: "green",
+      });
+    },
+  });
+
+export const recordManualAttendance = () =>
+  mutationOptions({
+    mutationFn: async (data: ManualAttendanceRequest) => {
+      return await axios
+        .post<AttendanceLogResponse>(`/attendance/manual`, data)
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Obecność ręczna zarejestrowana",
+        message: "Obecność została pomyślnie zarejestrowana ręcznie.",
+        color: "green",
+      });
+    },
+  });
+
+export const uploadTreatmentPlan = () =>
+  mutationOptions({
+    mutationFn: async ({
+      patientId,
+      file,
+    }: {
+      patientId: string;
+      file: File;
+    }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      return await axios
+        .post<TreatmentPlanResponse>(
+          `/treatment-plans?patientId=${encodeURIComponent(patientId)}`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        )
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Plan leczenia dodany",
+        message: "Plan leczenia został pomyślnie przesłany.",
+        color: "green",
+      });
+    },
+  });
+
+export const uploadPatientPhoto = () =>
+  mutationOptions({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      return await axios
+        .post<PatientPhotoResponse>(
+          `/patients/${encodeURIComponent(id)}/photos`,
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          },
+        )
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Zdjęcie pacjenta dodane",
+        message: "Zdjęcie pacjenta zostało pomyślnie przesłane.",
+        color: "green",
+      });
+    },
+  });
+
+export const updateManager = () =>
+  mutationOptions({
+    mutationFn: async ({
+      userId,
+      data,
+    }: {
+      userId: string;
+      data: UpdateManagerRequest;
+    }) => {
+      return await axios
+        .put<ApplicationUserResponse>(
+          `/users/${encodeURIComponent(userId)}/manager`,
+          data,
+        )
+        .then((r) => r.data);
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Manager zaktualizowany",
+        message: "Manager użytkownika został pomyślnie zaktualizowany.",
+        color: "green",
+      });
+    },
+  });
+
+export const getSubordinates = (userId: string) =>
+  queryOptions({
+    queryKey: ["users", userId, "subordinates"],
+    enabled: !!userId,
+    queryFn: async (): Promise<ApplicationUserResponse[]> => {
+      return await axios
+        .get<
+          ApplicationUserResponse[]
+        >(`/users/${encodeURIComponent(userId)}/subordinates`)
+        .then((r) => r.data);
+    },
+  });
+
+export const disableUser = () =>
+  mutationOptions({
+    mutationFn: async (data: DisableUserRequest) => {
+      return await axios.delete(`/users`, { data });
+    },
+    onSuccess: () => {
+      notifications.show({
+        title: "Użytkownik wyłączony",
+        message: "Użytkownik został pomyślnie wyłączony.",
+        color: "green",
+      });
     },
   });

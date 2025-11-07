@@ -33,6 +33,7 @@ export interface AppointmentResponse {
 }
 
 export interface AttendanceLogResponse {
+  /** @format uuid */
   id: string;
   method: "RFID_CARD" | "MANUAL";
   /** @format date-time */
@@ -88,7 +89,6 @@ export interface CreateTodoRequest {
 }
 
 export interface DisableUserRequest {
-  /** @minLength 1 */
   id: string;
 }
 
@@ -100,6 +100,54 @@ export interface InternalUserResponse {
   id: string;
   lastName: string;
   phoneNumber?: string;
+}
+
+export interface LeaveResponse {
+  comment?: string;
+  /** @format date-time */
+  createdAt?: string;
+  /** @format date */
+  dateFrom?: string;
+  /** @format date */
+  dateTo?: string;
+  deputy?: string;
+  /** @format uuid */
+  id?: string;
+  requester?: string;
+  status?: "CREATED" | "ACCEPTED" | "REJECTED" | "WITHDRAWN";
+  type?:
+    | "VACATION"
+    | "SICK_LEAVE"
+    | "UNPAID"
+    | "TRAINING"
+    | "PARENTAL"
+    | "OCCASIONAL"
+    | "ON_DEMAND"
+    | "OTHER";
+}
+
+export interface LeaveToAcceptRequest {
+  accepted?: boolean;
+  /** @format uuid */
+  id?: string;
+}
+
+export interface LeaveToAddRequest {
+  comment?: string;
+  /** @format date */
+  dateFrom: string;
+  /** @format date */
+  dateTo: string;
+  deputy?: string;
+  type:
+    | "VACATION"
+    | "SICK_LEAVE"
+    | "UNPAID"
+    | "TRAINING"
+    | "PARENTAL"
+    | "OCCASIONAL"
+    | "ON_DEMAND"
+    | "OTHER";
 }
 
 export interface ManualAttendanceRequest {
