@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "@mantine/form";
 import {
   Alert,
+  Anchor,
   Box,
   Button,
+  Group,
   Select,
   Stack,
   Text,
@@ -13,17 +15,19 @@ import {
 } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { IconInfoCircle } from "@tabler/icons-react";
-import { createFileRoute } from "@tanstack/react-router";
-import { EmployeePicker } from "../components/EmployeePicker.tsx";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { addLeave, getLeaveTypes } from "../../api.ts";
+import type { LeaveToAddRequest } from "../../api-types.ts";
+import dayjs from "dayjs";
 
-export const Route = createFileRoute("/vacation")({
+export const Route = createFileRoute("/vacation/")({
   component: VacationRequestForm,
 });
 
 interface FormValues {
-  employee: string;
-  vacationType: string;
-  date: [Date | null, Date | null];
+  type: LeaveToAddRequest["type"];
+  date: [string | null, string | null];
   substitute: string;
   comment: string;
 }
@@ -33,42 +37,53 @@ function VacationRequestForm() {
 
   const form = useForm<FormValues>({
     initialValues: {
-      employee: "",
-      vacationType: "wypoczynkowy",
-      date: [new Date(), null],
+      type: "VACATION",
+      date: [new Date().toDateString(), null],
       substitute: "",
       comment: "",
     },
     validate: {
-      employee: (value) =>
-        value.trim().length === 0 ? "To pole jest wymagane" : null,
-      vacationType: (value) =>
+      type: (value) =>
         value.trim().length === 0 ? "To pole jest wymagane" : null,
       date: (value) => {
         return value[0] === null || value[1] === null
           ? "To pole jest wymagane"
           : null;
       },
-      substitute: (value) =>
-        value.trim().length === 0 ? "To pole jest wymagane" : null,
     },
   });
 
-  const calculateDays = (start: Date | null, end: Date | null) => {
+  const leaveTypesQuery = useQuery(getLeaveTypes());
+  const leaveTypeOptions = (leaveTypesQuery.data ?? []).map((t) => ({
+    value: t,
+    label: humanizeLeaveType(t),
+  }));
+
+  const mutation = useMutation(addLeave());
+
+  const calculateDays = (start: string | null, end: string | null) => {
     if (!start || !end) return 1;
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+    return dayjs(end).diff(dayjs(start), "days") + 1;
   };
 
-  useEffect(() => {
-    const { date } = form.values;
-    if (date[0] && date[1]) {
-      setSelectedDays(calculateDays(date[0], date[1]));
-    }
-  }, [form.values]);
-
   const onSubmit = (values: FormValues) => {
-    console.log("Form submitted:", values);
+    const [from, to] = values.date;
+    if (!from || !to) return;
+    mutation.mutate(
+      {
+        type: values.type,
+        dateFrom: from,
+        dateTo: to,
+        deputy: values.substitute || undefined,
+        comment: values.comment || undefined,
+      },
+      {
+        onSuccess: async () => {
+          form.reset();
+          setSelectedDays(1);
+        },
+      },
+    );
   };
 
   return (
@@ -81,22 +96,21 @@ function VacationRequestForm() {
           </Text>
         </Box>
         <Stack>
-          <EmployeePicker inputProps={{ ...form.getInputProps("employee") }} />
           <Select
             label="Rodzaj urlopu"
-            placeholder="Wybierz rodzaj urlopu"
+            placeholder={
+              leaveTypesQuery.isLoading
+                ? "Ładowanie..."
+                : "Wybierz rodzaj urlopu"
+            }
             withAsterisk
-            data={[
-              { value: "wypoczynkowy", label: "wypoczynkowy" },
-              { value: "okolicznościowy", label: "okolicznościowy" },
-              { value: "na żądanie", label: "na żądanie" },
-              { value: "bezpłatny", label: "bezpłatny" },
-            ]}
+            data={leaveTypeOptions}
+            disabled={leaveTypesQuery.isLoading}
             {...form.getInputProps("vacationType")}
           />
           <Box>
             <Text size="sm" fw={500} mb={3}>
-              Data rozpoczęcia urlopu
+              Data urlopu
               {form.errors.startDate && (
                 <Text span c="red" size="xs" ml={5}>
                   {form.errors.startDate}
@@ -108,8 +122,15 @@ function VacationRequestForm() {
               firstDayOfWeek={1}
               weekendDays={[0, 6]}
               size="sm"
+              allowSingleDateInRange
               type="range"
               {...form.getInputProps("date")}
+              onChange={([start, end]) => {
+                form.setFieldValue("date", [start, end]);
+                if (start && end) {
+                  setSelectedDays(calculateDays(start, end));
+                }
+              }}
             />
           </Box>
           <TextInput
@@ -134,10 +155,37 @@ function VacationRequestForm() {
             </Text>
           </Alert>
         </Stack>
-        <Button fullWidth type="submit">
+        <Group gap="md" mt="xs">
+          <Anchor component={Link} to="/vacation/my">
+            Moje wnioski
+          </Anchor>
+          <Anchor component={Link} to="/vacation/employees">
+            Wnioski pracowników
+          </Anchor>
+        </Group>
+        <Button
+          fullWidth
+          type="submit"
+          loading={mutation.isPending}
+          disabled={!form.isValid()}
+        >
           Wyślij
         </Button>
       </Stack>
     </form>
   );
+}
+
+function humanizeLeaveType(type: string) {
+  const map: Record<string, string> = {
+    VACATION: "wypoczynkowy",
+    OCCASIONAL: "okolicznościowy",
+    ON_DEMAND: "na żądanie",
+    UNPAID: "bezpłatny",
+    SICK_LEAVE: "chorobowy",
+    TRAINING: "szkoleniowy",
+    PARENTAL: "rodzicielski",
+    OTHER: "inny",
+  };
+  return map[type];
 }

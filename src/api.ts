@@ -11,7 +11,7 @@ import {
   DisableUserRequest,
   InternalUserResponse,
   LeaveResponse,
-  LeaveToAcceptRequest,
+  LeaveStatusUpdateRequest,
   LeaveToAddRequest,
   ManualAttendanceRequest,
   PatientAppointmentResponse,
@@ -437,17 +437,8 @@ export const getLeaves = () =>
 
 export const addLeave = () =>
   mutationOptions({
-    mutationFn: async ({
-      userId,
-      data,
-    }: {
-      userId: string;
-      data: LeaveToAddRequest;
-    }) => {
-      return await axios.post(
-        `/leave?userId=${encodeURIComponent(userId)}`,
-        data,
-      );
+    mutationFn: async (data: LeaveToAddRequest) => {
+      return await axios.post(`/leave`, data);
     },
     onSuccess: () => {
       notifications.show({
@@ -465,7 +456,7 @@ export const acceptLeave = () =>
       data,
     }: {
       userId: string;
-      data: LeaveToAcceptRequest;
+      data: LeaveStatusUpdateRequest;
     }) => {
       return await axios.patch(
         `/leave?userId=${encodeURIComponent(userId)}`,

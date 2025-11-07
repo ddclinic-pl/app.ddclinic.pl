@@ -9,9 +9,9 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VacationRouteImport } from './routes/vacation'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VacationIndexRouteImport } from './routes/vacation/index'
 import { Route as UsersIndexRouteImport } from './routes/users/index'
 import { Route as PatientsIndexRouteImport } from './routes/patients/index'
 import { Route as IncidentsIndexRouteImport } from './routes/incidents/index'
@@ -19,13 +19,10 @@ import { Route as AttendanceIndexRouteImport } from './routes/attendance/index'
 import { Route as WarehouseSummaryRouteImport } from './routes/warehouse/summary'
 import { Route as WarehouseOrdersRouteImport } from './routes/warehouse/orders'
 import { Route as WarehouseNewOrderRouteImport } from './routes/warehouse/new-order'
+import { Route as VacationMyRouteImport } from './routes/vacation/my'
+import { Route as VacationEmployeesRouteImport } from './routes/vacation/employees'
 import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
 
-const VacationRoute = VacationRouteImport.update({
-  id: '/vacation',
-  path: '/vacation',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -34,6 +31,11 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VacationIndexRoute = VacationIndexRouteImport.update({
+  id: '/vacation/',
+  path: '/vacation/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UsersIndexRoute = UsersIndexRouteImport.update({
@@ -71,6 +73,16 @@ const WarehouseNewOrderRoute = WarehouseNewOrderRouteImport.update({
   path: '/warehouse/new-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VacationMyRoute = VacationMyRouteImport.update({
+  id: '/vacation/my',
+  path: '/vacation/my',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VacationEmployeesRoute = VacationEmployeesRouteImport.update({
+  id: '/vacation/employees',
+  path: '/vacation/employees',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   id: '/patients/$patientId',
   path: '/patients/$patientId',
@@ -80,8 +92,9 @@ const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/vacation': typeof VacationRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
+  '/vacation/employees': typeof VacationEmployeesRoute
+  '/vacation/my': typeof VacationMyRoute
   '/warehouse/new-order': typeof WarehouseNewOrderRoute
   '/warehouse/orders': typeof WarehouseOrdersRoute
   '/warehouse/summary': typeof WarehouseSummaryRoute
@@ -89,12 +102,14 @@ export interface FileRoutesByFullPath {
   '/incidents': typeof IncidentsIndexRoute
   '/patients': typeof PatientsIndexRoute
   '/users': typeof UsersIndexRoute
+  '/vacation': typeof VacationIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/vacation': typeof VacationRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
+  '/vacation/employees': typeof VacationEmployeesRoute
+  '/vacation/my': typeof VacationMyRoute
   '/warehouse/new-order': typeof WarehouseNewOrderRoute
   '/warehouse/orders': typeof WarehouseOrdersRoute
   '/warehouse/summary': typeof WarehouseSummaryRoute
@@ -102,13 +117,15 @@ export interface FileRoutesByTo {
   '/incidents': typeof IncidentsIndexRoute
   '/patients': typeof PatientsIndexRoute
   '/users': typeof UsersIndexRoute
+  '/vacation': typeof VacationIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/vacation': typeof VacationRoute
   '/patients/$patientId': typeof PatientsPatientIdRoute
+  '/vacation/employees': typeof VacationEmployeesRoute
+  '/vacation/my': typeof VacationMyRoute
   '/warehouse/new-order': typeof WarehouseNewOrderRoute
   '/warehouse/orders': typeof WarehouseOrdersRoute
   '/warehouse/summary': typeof WarehouseSummaryRoute
@@ -116,14 +133,16 @@ export interface FileRoutesById {
   '/incidents/': typeof IncidentsIndexRoute
   '/patients/': typeof PatientsIndexRoute
   '/users/': typeof UsersIndexRoute
+  '/vacation/': typeof VacationIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
-    | '/vacation'
     | '/patients/$patientId'
+    | '/vacation/employees'
+    | '/vacation/my'
     | '/warehouse/new-order'
     | '/warehouse/orders'
     | '/warehouse/summary'
@@ -131,12 +150,14 @@ export interface FileRouteTypes {
     | '/incidents'
     | '/patients'
     | '/users'
+    | '/vacation'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/vacation'
     | '/patients/$patientId'
+    | '/vacation/employees'
+    | '/vacation/my'
     | '/warehouse/new-order'
     | '/warehouse/orders'
     | '/warehouse/summary'
@@ -144,12 +165,14 @@ export interface FileRouteTypes {
     | '/incidents'
     | '/patients'
     | '/users'
+    | '/vacation'
   id:
     | '__root__'
     | '/'
     | '/about'
-    | '/vacation'
     | '/patients/$patientId'
+    | '/vacation/employees'
+    | '/vacation/my'
     | '/warehouse/new-order'
     | '/warehouse/orders'
     | '/warehouse/summary'
@@ -157,13 +180,15 @@ export interface FileRouteTypes {
     | '/incidents/'
     | '/patients/'
     | '/users/'
+    | '/vacation/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  VacationRoute: typeof VacationRoute
   PatientsPatientIdRoute: typeof PatientsPatientIdRoute
+  VacationEmployeesRoute: typeof VacationEmployeesRoute
+  VacationMyRoute: typeof VacationMyRoute
   WarehouseNewOrderRoute: typeof WarehouseNewOrderRoute
   WarehouseOrdersRoute: typeof WarehouseOrdersRoute
   WarehouseSummaryRoute: typeof WarehouseSummaryRoute
@@ -171,17 +196,11 @@ export interface RootRouteChildren {
   IncidentsIndexRoute: typeof IncidentsIndexRoute
   PatientsIndexRoute: typeof PatientsIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
+  VacationIndexRoute: typeof VacationIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/vacation': {
-      id: '/vacation'
-      path: '/vacation'
-      fullPath: '/vacation'
-      preLoaderRoute: typeof VacationRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -194,6 +213,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vacation/': {
+      id: '/vacation/'
+      path: '/vacation'
+      fullPath: '/vacation'
+      preLoaderRoute: typeof VacationIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/users/': {
@@ -245,6 +271,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WarehouseNewOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vacation/my': {
+      id: '/vacation/my'
+      path: '/vacation/my'
+      fullPath: '/vacation/my'
+      preLoaderRoute: typeof VacationMyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vacation/employees': {
+      id: '/vacation/employees'
+      path: '/vacation/employees'
+      fullPath: '/vacation/employees'
+      preLoaderRoute: typeof VacationEmployeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patients/$patientId': {
       id: '/patients/$patientId'
       path: '/patients/$patientId'
@@ -258,8 +298,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  VacationRoute: VacationRoute,
   PatientsPatientIdRoute: PatientsPatientIdRoute,
+  VacationEmployeesRoute: VacationEmployeesRoute,
+  VacationMyRoute: VacationMyRoute,
   WarehouseNewOrderRoute: WarehouseNewOrderRoute,
   WarehouseOrdersRoute: WarehouseOrdersRoute,
   WarehouseSummaryRoute: WarehouseSummaryRoute,
@@ -267,6 +308,7 @@ const rootRouteChildren: RootRouteChildren = {
   IncidentsIndexRoute: IncidentsIndexRoute,
   PatientsIndexRoute: PatientsIndexRoute,
   UsersIndexRoute: UsersIndexRoute,
+  VacationIndexRoute: VacationIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

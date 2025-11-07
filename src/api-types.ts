@@ -126,7 +126,7 @@ export interface LeaveResponse {
     | "OTHER";
 }
 
-export interface LeaveToAcceptRequest {
+export interface LeaveStatusUpdateRequest {
   accepted?: boolean;
   /** @format uuid */
   id?: string;
