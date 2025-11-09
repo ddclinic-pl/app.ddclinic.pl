@@ -13,6 +13,7 @@ import {
   LeaveResponse,
   LeaveStatusUpdateRequest,
   LeaveToAddRequest,
+  LeaveTypeResponse,
   ManualAttendanceRequest,
   PatientAppointmentResponse,
   PatientFileResponse,
@@ -475,8 +476,11 @@ export const acceptLeave = () =>
 export const getLeaveTypes = () =>
   queryOptions({
     queryKey: ["leave", "types"],
-    queryFn: async (): Promise<string[]> => {
-      return await axios.get<string[]>(`/leave/types`).then((r) => r.data);
+    staleTime: Infinity,
+    queryFn: async (): Promise<LeaveTypeResponse[]> => {
+      return await axios
+        .get<LeaveTypeResponse[]>(`/leave/types`)
+        .then((r) => r.data);
     },
   });
 
@@ -492,26 +496,23 @@ export const getLeaveSummary = (userId: string, year: number) =>
     },
   });
 
-export const getMyLeaves = (userId: string, year: number) =>
+export const getMyLeaves = (year: number | undefined) =>
   queryOptions({
-    queryKey: ["leave", "my", userId, year],
+    queryKey: ["leave", "my", year],
+    enabled: !!year,
     queryFn: async (): Promise<LeaveResponse[]> => {
       return await axios
-        .get<
-          LeaveResponse[]
-        >(`/leave/my?userId=${encodeURIComponent(userId)}&year=${year}`)
+        .get<LeaveResponse[]>(`/leave/my?year=${year}`)
         .then((r) => r.data);
     },
   });
 
-export const getLeavesByManager = (userId: string) =>
+export const getLeavesByManager = () =>
   queryOptions({
-    queryKey: ["leave", "employees", userId],
+    queryKey: ["leave", "employees", "my"],
     queryFn: async (): Promise<LeaveResponse[]> => {
       return await axios
-        .get<
-          LeaveResponse[]
-        >(`/leave/employees?userId=${encodeURIComponent(userId)}`)
+        .get<LeaveResponse[]>(`/leave/employees`)
         .then((r) => r.data);
     },
   });

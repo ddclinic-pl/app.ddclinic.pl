@@ -1,6 +1,7 @@
 import { Box, Collapse, NavLink, ScrollArea } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
 import {
+  IconAddressBook,
   IconAlertCircle,
   IconBox,
   IconCalendar,
@@ -16,23 +17,13 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { Children, ReactElement } from "react";
 
-export function AppNavigation({
-  toggleMobile,
-  toggleDesktop,
-}: {
-  toggleMobile: () => void;
-  toggleDesktop: () => void;
-}) {
-  const handleClick = () => {
-    toggleMobile();
-    toggleDesktop();
-  };
+export function AppNavigation({ handleClick }: { handleClick: () => void }) {
   return (
     <nav>
       <ScrollArea>
         <NavLink
           component={Link}
-          to="/"
+          to="/appointments"
           label="Moje wizyty"
           onClick={handleClick}
           leftSection={<IconCalendar size={16} stroke={1.5} />}
@@ -52,13 +43,25 @@ export function AppNavigation({
           onClick={handleClick}
           leftSection={<IconAlertCircle size={16} stroke={1.5} />}
         />
-        <NavLink
-          component={Link}
-          to="/vacation"
-          label="Wniosek urlopowy"
-          onClick={handleClick}
-          leftSection={<IconCalendarSmile size={16} stroke={1.5} />}
-        />
+        <CollapsableLink
+          label="Kadry"
+          icon={<IconAddressBook size={16} stroke={1.5} />}
+        >
+          <NavLink
+            component={Link}
+            to="/vacation/form"
+            label="Wniosek urlopowy"
+            onClick={handleClick}
+            leftSection={<IconCalendarSmile size={16} stroke={1.5} />}
+          />
+          <NavLink
+            component={Link}
+            to="/vacation/my"
+            label="Moje urlopy"
+            onClick={handleClick}
+            leftSection={<IconCalendarSmile size={16} stroke={1.5} />}
+          />
+        </CollapsableLink>
         <NavLink
           component={Link}
           to="/attendance"
@@ -98,8 +101,8 @@ export function AppNavigation({
         >
           <NavLink
             component={Link}
-            to="/users"
-            label="Godziny pracy"
+            to="/vacation/employees"
+            label="Urlopy pracowników"
             onClick={handleClick}
             leftSection={<IconClockCheck size={16} stroke={1.5} />}
           />

@@ -61,8 +61,10 @@ function Layout({ children }: { children: ReactNode }) {
       </AppShell.Header>
       <AppShell.Navbar p="md">
         <AppNavigation
-          toggleMobile={toggleMobile}
-          toggleDesktop={toggleDesktop}
+          handleClick={() => {
+            toggleDesktop();
+            toggleMobile();
+          }}
         />
       </AppShell.Navbar>
       <AppShell.Main style={{ height: "100dvh" }}>{children}</AppShell.Main>

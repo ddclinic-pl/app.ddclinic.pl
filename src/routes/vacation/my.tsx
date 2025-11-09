@@ -1,76 +1,66 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { getMyLeaves } from "../../api.ts";
-import { useUser } from "@clerk/clerk-react";
-import {
-  Alert,
-  Anchor,
-  Box,
-  Card,
-  Group,
-  Loader,
-  Stack,
-  Text,
-  Title,
-} from "@mantine/core";
-import { IconInfoCircle } from "@tabler/icons-react";
-import type { LeaveResponse } from "../../api-types.ts";
+import { Alert, Box, Card, Group, Stack, Text, Title } from "@mantine/core";
+import { IconCalendar, IconInfoCircle } from "@tabler/icons-react";
+import { queryClient } from "../../queryClient.ts";
+import FullScreenLoader from "../../components/FullScreenLoader.tsx";
+import dayjs from "dayjs";
+import { YearPickerInput } from "@mantine/dates";
 
 export const Route = createFileRoute("/vacation/my")({
   component: MyLeaves,
+  validateSearch: (search) => ({
+    year: new Date().getFullYear(),
+    ...search,
+  }),
+  loaderDeps: (context) => ({ year: context.search.year }),
+  loader: (context) =>
+    queryClient.ensureQueryData(getMyLeaves(context.deps.year)),
 });
 
-function formatDate(d?: string) {
-  if (!d) return "-";
-  try {
-    return new Date(d).toLocaleDateString();
-  } catch {
-    return d;
-  }
-}
-
 function MyLeaves() {
-  const { user } = useUser();
-  const userId = user?.id || "";
-  const year = new Date().getFullYear();
-
-  const { data, isLoading } = useQuery(
-    userId
-      ? getMyLeaves(userId, year)
-      : {
-          queryKey: ["leave", "my", userId, year],
-          enabled: false,
-          queryFn: async () => [] as LeaveResponse[],
-        },
-  );
-
+  const { year } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const leavesQuery = useSuspenseQuery(getMyLeaves(year));
+  if (leavesQuery.isLoading || !leavesQuery.data) return <FullScreenLoader />;
   return (
     <Stack>
-      <Group justify="space-between" align="baseline">
-        <Title order={3}>Moje wnioski urlopowe — {year}</Title>
-        <Anchor component={Link} to="/vacation">
-          Nowy wniosek
-        </Anchor>
+      <Group justify="space-between">
+        <Title size="xl">Moje urlopy</Title>
+        <YearPickerInput
+          leftSection={<IconCalendar size={18} stroke={1.5} />}
+          leftSectionPointerEvents="none"
+          value={String(year)}
+          onChange={(year) => {
+            if (!year) return;
+            return navigate({
+              search: (prev) => ({
+                ...prev,
+                year: Number(year.substring(0, 4)),
+              }),
+            });
+          }}
+          dropdownType="modal"
+          valueFormat="YYYY"
+        />
       </Group>
-      {isLoading && (
-        <Group gap="xs">
-          <Loader size="sm" />
-          <Text>Ładowanie...</Text>
-        </Group>
-      )}
-      {!isLoading && (data?.length ?? 0) === 0 && (
+
+      {leavesQuery.data?.length === 0 && (
         <Alert icon={<IconInfoCircle size={16} />} variant="light">
           Brak wniosków urlopowych w tym roku.
         </Alert>
       )}
+
       <Stack>
-        {data?.map((leave) => (
+        {leavesQuery.data.map((leave) => (
           <Card key={leave.id} withBorder>
             <Group justify="space-between">
               <Box>
                 <Text fw={600}>{leave.type}</Text>
                 <Text size="sm" c="dimmed">
-                  {formatDate(leave.dateFrom)} — {formatDate(leave.dateTo)}
+                  {dayjs(leave.dateFrom).format("DD-MM-YYYY")} —{" "}
+                  {dayjs(leave.dateTo).format("DD-MM-YYYY")}
                 </Text>
                 {leave.comment && (
                   <Text size="sm" mt={6}>

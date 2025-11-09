@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getLeavesByManager } from "../../api.ts";
-import { useUser } from "@clerk/clerk-react";
 import {
   Alert,
   Anchor,
@@ -14,7 +13,6 @@ import {
   Title,
 } from "@mantine/core";
 import { IconInfoCircle } from "@tabler/icons-react";
-import type { LeaveResponse } from "../../api-types.ts";
 
 export const Route = createFileRoute("/vacation/employees")({
   component: EmployeesLeaves,
@@ -30,19 +28,7 @@ function formatDate(d?: string) {
 }
 
 function EmployeesLeaves() {
-  const { user } = useUser();
-  const userId = user?.id || "";
-
-  const { data, isLoading } = useQuery(
-    userId
-      ? getLeavesByManager(userId)
-      : {
-          queryKey: ["leave", "employees", userId],
-          enabled: false,
-          queryFn: async () => [] as LeaveResponse[],
-        },
-  );
-
+  const { data, isLoading } = useQuery(getLeavesByManager());
   return (
     <Stack>
       <Group justify="space-between" align="baseline">

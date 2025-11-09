@@ -105,25 +105,17 @@ export interface InternalUserResponse {
 export interface LeaveResponse {
   comment?: string;
   /** @format date-time */
-  createdAt?: string;
+  createdAt: string;
   /** @format date */
-  dateFrom?: string;
+  dateFrom: string;
   /** @format date */
-  dateTo?: string;
+  dateTo: string;
   deputy?: string;
   /** @format uuid */
-  id?: string;
-  requester?: string;
-  status?: "CREATED" | "ACCEPTED" | "REJECTED" | "WITHDRAWN";
-  type?:
-    | "VACATION"
-    | "SICK_LEAVE"
-    | "UNPAID"
-    | "TRAINING"
-    | "PARENTAL"
-    | "OCCASIONAL"
-    | "ON_DEMAND"
-    | "OTHER";
+  id: string;
+  requester: string;
+  status: string;
+  type: string;
 }
 
 export interface LeaveStatusUpdateRequest {
@@ -146,8 +138,12 @@ export interface LeaveToAddRequest {
     | "TRAINING"
     | "PARENTAL"
     | "OCCASIONAL"
-    | "ON_DEMAND"
-    | "OTHER";
+    | "ON_DEMAND";
+}
+
+export interface LeaveTypeResponse {
+  id: string;
+  label: string;
 }
 
 export interface ManualAttendanceRequest {

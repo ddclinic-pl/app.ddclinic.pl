@@ -21,7 +21,7 @@ import { addLeave, getLeaveTypes } from "../../api.ts";
 import type { LeaveToAddRequest } from "../../api-types.ts";
 import dayjs from "dayjs";
 
-export const Route = createFileRoute("/vacation/")({
+export const Route = createFileRoute("/vacation/form")({
   component: VacationRequestForm,
 });
 
@@ -34,6 +34,8 @@ interface FormValues {
 
 function VacationRequestForm() {
   const [selectedDays, setSelectedDays] = useState(1);
+  const leaveTypesQuery = useQuery(getLeaveTypes());
+  const addLeaveMutation = useMutation(addLeave());
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -53,14 +55,6 @@ function VacationRequestForm() {
     },
   });
 
-  const leaveTypesQuery = useQuery(getLeaveTypes());
-  const leaveTypeOptions = (leaveTypesQuery.data ?? []).map((t) => ({
-    value: t,
-    label: humanizeLeaveType(t),
-  }));
-
-  const mutation = useMutation(addLeave());
-
   const calculateDays = (start: string | null, end: string | null) => {
     if (!start || !end) return 1;
     return dayjs(end).diff(dayjs(start), "days") + 1;
@@ -69,7 +63,7 @@ function VacationRequestForm() {
   const onSubmit = (values: FormValues) => {
     const [from, to] = values.date;
     if (!from || !to) return;
-    mutation.mutate(
+    addLeaveMutation.mutate(
       {
         type: values.type,
         dateFrom: from,
@@ -104,7 +98,10 @@ function VacationRequestForm() {
                 : "Wybierz rodzaj urlopu"
             }
             withAsterisk
-            data={leaveTypeOptions}
+            data={(leaveTypesQuery.data || []).map((type) => ({
+              value: type.id,
+              label: type.label,
+            }))}
             disabled={leaveTypesQuery.isLoading}
             {...form.getInputProps("vacationType")}
           />
@@ -166,7 +163,7 @@ function VacationRequestForm() {
         <Button
           fullWidth
           type="submit"
-          loading={mutation.isPending}
+          loading={addLeaveMutation.isPending}
           disabled={!form.isValid()}
         >
           Wyślij
@@ -174,18 +171,4 @@ function VacationRequestForm() {
       </Stack>
     </form>
   );
-}
-
-function humanizeLeaveType(type: string) {
-  const map: Record<string, string> = {
-    VACATION: "wypoczynkowy",
-    OCCASIONAL: "okolicznościowy",
-    ON_DEMAND: "na żądanie",
-    UNPAID: "bezpłatny",
-    SICK_LEAVE: "chorobowy",
-    TRAINING: "szkoleniowy",
-    PARENTAL: "rodzicielski",
-    OTHER: "inny",
-  };
-  return map[type];
 }
