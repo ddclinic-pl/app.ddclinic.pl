@@ -169,15 +169,9 @@ export const getWarehouseSummary = () =>
   queryOptions({
     queryKey: ["warehouse", "summary"],
     queryFn: async (): Promise<WarehouseProduct[]> => {
-      return Promise.resolve([
-        { id: "prod-a", name: "Wiertło stomatologiczne", currentStock: 120 },
-        { id: "prod-b", name: "Płyn do dezynfekcji", currentStock: 35 },
-        { id: "prod-c", name: "Rękawiczki lateksowe", currentStock: 500 },
-        { id: "prod-d", name: "Strzykawki", currentStock: 260 },
-      ]);
-      // return await axios
-      //   .get<WarehouseProduct[]>(`/warehouse/products`)
-      //   .then((response) => response.data);
+      return await axios
+        .get<WarehouseProduct[]>(`/warehouse/products`)
+        .then((response) => response.data);
     },
   });
 

@@ -5,12 +5,7 @@ import "@mantine/core/styles.css";
 import "@mantine/notifications/styles.css";
 import "@mantine/charts/styles.css";
 import "@mantine/dates/styles.css";
-import {
-  ColorSchemeScript,
-  createTheme,
-  MantineProvider,
-  Stack,
-} from "@mantine/core";
+import { ColorSchemeScript, createTheme, MantineProvider } from "@mantine/core";
 import {
   ClerkProvider,
   RedirectToSignIn,
@@ -49,17 +44,11 @@ const theme = createTheme({
     ],
   },
   primaryColor: "gold",
-  components: {
-    Stack: Stack.extend({
-      defaultProps: {
-        h: "100%",
-      },
-    }),
-  },
+  components: {},
 });
 
-// Create a new app instance
-const app = createRouter({
+// Create a new router instance
+const router = createRouter({
   routeTree,
   context: {
     queryClient,
@@ -72,10 +61,10 @@ const app = createRouter({
   scrollRestoration: true,
 });
 
-// Register the app instance for type safety
+// Register the router instance for type safety
 declare module "@tanstack/react-router" {
   interface Register {
-    router: typeof app;
+    router: typeof router;
   }
 }
 
@@ -102,7 +91,7 @@ createRoot(document.getElementById("root")!).render(
           <MantineProvider theme={theme} defaultColorScheme="auto">
             <DatesProvider settings={{ locale: "pl" }}>
               <ModalsProvider>
-                <RouterProvider router={app} />
+                <RouterProvider router={router} />
               </ModalsProvider>
               <Notifications />
             </DatesProvider>

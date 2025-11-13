@@ -1,14 +1,10 @@
-import { Container, Image, Stack, Text } from "@mantine/core";
+import CenterImage from "./CenterImage.tsx";
 
 export function NotFoundScreen() {
   return (
-    <Container size="sm">
-      <Stack gap="lg" align="center" p="xl">
-        <Image src="/undraw_page-not-found_6wni.svg" alt="nie znaleziono" />
-        <Text size="lg" style={{ textWrap: "balance" }}>
-          Strona nie istnieje
-        </Text>
-      </Stack>
-    </Container>
+    <CenterImage
+      image="/undraw_page-not-found_6wni.svg"
+      message="Strona nie istnieje"
+    />
   );
 }

@@ -1,6 +1,7 @@
-import { Accordion, Button, Group, Stack, Text, Title } from "@mantine/core";
+import { Accordion, Button, Group, Stack, Text } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
 import { IconClockPlay, IconClockStop } from "@tabler/icons-react";
+import FullScreenRoute from "../../components/FullScreenRoute.tsx";
 
 // Mock data for demonstration
 const attendanceData = [
@@ -21,46 +22,47 @@ export const Route = createFileRoute("/attendance/")({
 
 export default function Attendance() {
   return (
-    <Stack>
-      <Title order={2}>Moje godziny pracy</Title>
-      <Text size="md">Razem: 24h</Text>
-      <Accordion>
-        {attendanceData.map((day) => (
-          <Accordion.Item key={day.date} value={day.date}>
-            <Accordion.Control>
-              <Group justify="space-between" pr="sm">
-                <Text>{day.date}</Text>
-                <Text c="dimmed">6h</Text>
-              </Group>
-            </Accordion.Control>
-            <Accordion.Panel>
-              <Group justify="space-between" p="sm">
-                <Stack gap="sm">
-                  <Text c="dimmed" size="sm">
-                    Wejście
-                  </Text>
-                  <Group>
-                    <IconClockPlay />
-                    <Text>10:00</Text>
-                  </Group>
-                </Stack>
-                <Stack gap="sm">
-                  <Text c="dimmed" size="sm">
-                    Wyjście
-                  </Text>
-                  <Group>
-                    <IconClockStop />
-                    <Text>18:00</Text>
-                  </Group>
-                </Stack>
-              </Group>
-              <Button disabled variant="light" fullWidth>
-                Popraw godziny pracy
-              </Button>
-            </Accordion.Panel>
-          </Accordion.Item>
-        ))}
-      </Accordion>
-    </Stack>
+    <FullScreenRoute title="Moje godziny pracy">
+      <>
+        <Text size="md">Razem: 24h</Text>
+        <Accordion>
+          {attendanceData.map((day) => (
+            <Accordion.Item key={day.date} value={day.date}>
+              <Accordion.Control>
+                <Group justify="space-between" pr="sm">
+                  <Text>{day.date}</Text>
+                  <Text c="dimmed">6h</Text>
+                </Group>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <Group justify="space-between" p="sm">
+                  <Stack gap="sm">
+                    <Text c="dimmed" size="sm">
+                      Wejście
+                    </Text>
+                    <Group>
+                      <IconClockPlay />
+                      <Text>10:00</Text>
+                    </Group>
+                  </Stack>
+                  <Stack gap="sm">
+                    <Text c="dimmed" size="sm">
+                      Wyjście
+                    </Text>
+                    <Group>
+                      <IconClockStop />
+                      <Text>18:00</Text>
+                    </Group>
+                  </Stack>
+                </Group>
+                <Button disabled variant="light" fullWidth>
+                  Popraw godziny pracy
+                </Button>
+              </Accordion.Panel>
+            </Accordion.Item>
+          ))}
+        </Accordion>
+      </>
+    </FullScreenRoute>
   );
 }

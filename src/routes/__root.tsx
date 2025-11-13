@@ -12,22 +12,21 @@ import { AppHeader } from "../components/AppHeader.tsx";
 import { AppNavigation } from "../components/AppNavigation.tsx";
 import { ErrorScreen } from "../components/ErrorScreen.tsx";
 import { ReactNode } from "react";
-import { NuqsAdapter } from "nuqs/adapters/tanstack-router";
 
 interface RouterContext {
   queryClient: QueryClient;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
-  component: () => (
-    <NuqsAdapter>
+  component: () => {
+    return (
       <Layout>
         <HeadContent />
         <Outlet />
         <TanStackRouterDevtools />
       </Layout>
-    </NuqsAdapter>
-  ),
+    );
+  },
   notFoundComponent: NotFoundScreen,
   errorComponent: ({ error }) => (
     <Layout>
@@ -37,35 +36,29 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function Layout({ children }: { children: ReactNode }) {
-  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure();
-  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure();
+  const [menuOpened, { toggle }] = useDisclosure();
   return (
     <AppShell
       header={{ height: 60 }}
       navbar={{
         width: 300,
         breakpoint: "sm",
-        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
+        collapsed: { mobile: !menuOpened, desktop: !menuOpened },
       }}
       padding="md"
     >
       <AppShell.Header>
         <AppHeader
           handlers={{
-            mobileOpened,
-            desktopOpened,
-            toggleMobile,
-            toggleDesktop,
+            mobileOpened: menuOpened,
+            desktopOpened: menuOpened,
+            toggleMobile: toggle,
+            toggleDesktop: toggle,
           }}
         />
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        <AppNavigation
-          handleClick={() => {
-            toggleDesktop();
-            toggleMobile();
-          }}
-        />
+        <AppNavigation handleClick={toggle} />
       </AppShell.Navbar>
       <AppShell.Main style={{ height: "100dvh" }}>{children}</AppShell.Main>
     </AppShell>

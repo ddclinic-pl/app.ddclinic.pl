@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Group, Stack, Title } from "@mantine/core";
 import { getMyAppointments } from "../../api.ts";
 import { AppointmentsTimeline } from "../../components/AppointmentsTimeline.tsx";
 import { queryClient } from "../../queryClient.ts";
@@ -7,7 +6,8 @@ import dayjs from "dayjs";
 import { DatePickerInput } from "@mantine/dates";
 import { IconCalendar } from "@tabler/icons-react";
 import { AppointmentResponse } from "../../api-types.ts";
-import BottomImage from "../../components/BottomImage.tsx";
+import CenterImage from "../../components/CenterImage.tsx";
+import FullScreenRoute from "../../components/FullScreenRoute.tsx";
 
 export const Route = createFileRoute("/appointments/")({
   component: MyAppointments,
@@ -32,9 +32,9 @@ function MyAppointments() {
   const navigate = useNavigate({ from: Route.fullPath });
   const appointments = Route.useLoaderData();
   return (
-    <Stack>
-      <Group justify="space-between">
-        <Title size="xl">Moje wizyty</Title>
+    <FullScreenRoute
+      title="Moje wizyty"
+      action={
         <DatePickerInput
           leftSection={<IconCalendar size={18} stroke={1.5} />}
           leftSectionPointerEvents="none"
@@ -49,9 +49,10 @@ function MyAppointments() {
           dropdownType="modal"
           valueFormat="YYYY-MM-DD"
         />
-      </Group>
+      }
+    >
       <Appointments appointments={appointments} />
-    </Stack>
+    </FullScreenRoute>
   );
 }
 
@@ -66,7 +67,7 @@ function Appointments({
 
 function NoAppointments() {
   return (
-    <BottomImage
+    <CenterImage
       image="/undraw_hot-air-balloon_6knx.svg"
       message="Brak wizyt"
     />

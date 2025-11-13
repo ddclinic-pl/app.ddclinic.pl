@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Box, Input, ScrollArea, Stack, Title } from "@mantine/core";
+import { Box, Input, Stack, Title } from "@mantine/core";
 import { getPatients } from "../../api.ts";
 import { useDebouncedCallback } from "@mantine/hooks";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { queryClient } from "../../queryClient.ts";
 import { useState } from "react";
 import { PatientSearchResults } from "./-components/PatientSearchResults.tsx";
+import FullScreenRoute from "../../components/FullScreenRoute.tsx";
 
 export const Route = createFileRoute("/patients/")({
   component: PatientsBrowse,
@@ -37,11 +38,11 @@ function PatientsBrowse() {
   }, 400);
   const patientsQuery = useSuspenseQuery(getPatients(query));
   return (
-    <Stack gap="md">
+    <FullScreenRoute>
       <Box
         style={{
           position: "sticky",
-          top: 60,
+          top: -16,
           zIndex: 100,
           background: "var(--mantine-color-body)",
           margin: -16,
@@ -63,13 +64,13 @@ function PatientsBrowse() {
           />
         </Stack>
       </Box>
-      <ScrollArea h="100%">
+      <Box pt="md">
         <PatientSearchResults
           query={query}
           isLoading={patientsQuery.isLoading}
           patients={patientsQuery.data}
         />
-      </ScrollArea>
-    </Stack>
+      </Box>
+    </FullScreenRoute>
   );
 }

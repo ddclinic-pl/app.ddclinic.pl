@@ -11,7 +11,7 @@ import {
   Text,
 } from "@mantine/core";
 import { IconChevronRight, IconHome, IconPhoneCall } from "@tabler/icons-react";
-import BottomImage from "../../../components/BottomImage.tsx";
+import CenterImage from "../../../components/CenterImage.tsx";
 
 export function PatientSearchResults({
   query,
@@ -87,11 +87,11 @@ export function PatientSearchResults({
 }
 
 function NoQuery() {
-  return <BottomImage image="/undraw_choose_5kz4.svg" />;
+  return <CenterImage image="/undraw_choose_5kz4.svg" />;
 }
 
 function NoPatientsFound() {
   return (
-    <BottomImage image="/undraw_no-data_ig65.svg" message="Brak wyników" />
+    <CenterImage image="/undraw_no-data_ig65.svg" message="Brak wyników" />
   );
 }

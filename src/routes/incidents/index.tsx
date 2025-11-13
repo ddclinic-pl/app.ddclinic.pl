@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Box, SegmentedControl, Stack, Text, Title } from "@mantine/core";
+import { SegmentedControl, Text } from "@mantine/core";
 import { useState } from "react";
 import { ComputerIncidentForm } from "./-components/computers.tsx";
 import { EquipmentIncidentForm } from "./-components/equipment.tsx";
+import FullScreenRoute from "../../components/FullScreenRoute.tsx";
 
 export const Route = createFileRoute("/incidents/")({
   component: IncidentsPage,
@@ -15,28 +16,25 @@ function IncidentsPage() {
   const [type, setType] = useState<"computer" | "equipment">("equipment");
 
   return (
-    <Stack>
-      <Title size="xl">Awarie</Title>
-      <Box>
-        <Text size="sm" fw={500} mb={6}>
-          Rodzaj incydentu
-        </Text>
-        <SegmentedControl
-          fullWidth
-          value={type}
-          onChange={(v) => setType(v as "computer" | "equipment")}
-          data={[
-            { label: "Sprzęt dentystyczny", value: "equipment" },
-            { label: "Komputer", value: "computer" },
-          ]}
-        />
-      </Box>
-
+    <FullScreenRoute>
+      <Text size="sm" fw={500} mb={6}>
+        Rodzaj incydentu
+      </Text>
+      <SegmentedControl
+        mb="md"
+        fullWidth
+        value={type}
+        onChange={(v) => setType(v as "computer" | "equipment")}
+        data={[
+          { label: "Sprzęt dentystyczny", value: "equipment" },
+          { label: "Komputer", value: "computer" },
+        ]}
+      />
       {type === "computer" ? (
         <ComputerIncidentForm />
       ) : (
         <EquipmentIncidentForm />
       )}
-    </Stack>
+    </FullScreenRoute>
   );
 }

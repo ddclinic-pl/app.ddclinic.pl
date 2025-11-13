@@ -9,13 +9,9 @@ export default function PatientAppointments({
 }) {
   return (
     <Stack ml="xs">
-      {appointments.map((appointment) => (
-        <Stack gap={4}>
-          <Group
-            key={appointment.date + appointment.startTime + appointment.endTime}
-            justify="space-between"
-            align="center"
-          >
+      {appointments.map((appointment, i) => (
+        <Stack gap={4} key={i}>
+          <Group justify="space-between" align="center">
             <Group gap="xs">
               <IconCalendar size={16} />
               <Text size="xs" component="time" dateTime={appointment.date}>

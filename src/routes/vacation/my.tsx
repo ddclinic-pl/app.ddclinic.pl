@@ -1,12 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getMyLeaves } from "../../api.ts";
-import { Alert, Box, Card, Group, Stack, Text, Title } from "@mantine/core";
+import { Alert, Badge, Box, Card, Group, Stack, Text } from "@mantine/core";
 import { IconCalendar, IconInfoCircle } from "@tabler/icons-react";
 import { queryClient } from "../../queryClient.ts";
 import FullScreenLoader from "../../components/FullScreenLoader.tsx";
-import dayjs from "dayjs";
 import { YearPickerInput } from "@mantine/dates";
+import { LeaveResponse } from "../../api-types.ts";
+import dayjs, { Dayjs } from "dayjs";
+import FullScreenRoute from "../../components/FullScreenRoute.tsx";
 
 export const Route = createFileRoute("/vacation/my")({
   component: MyLeaves,
@@ -25,9 +27,9 @@ function MyLeaves() {
   const leavesQuery = useSuspenseQuery(getMyLeaves(year));
   if (leavesQuery.isLoading || !leavesQuery.data) return <FullScreenLoader />;
   return (
-    <Stack>
-      <Group justify="space-between">
-        <Title size="xl">Moje urlopy</Title>
+    <FullScreenRoute
+      title="Moje urlopy"
+      action={
         <YearPickerInput
           leftSection={<IconCalendar size={18} stroke={1.5} />}
           leftSectionPointerEvents="none"
@@ -44,44 +46,74 @@ function MyLeaves() {
           dropdownType="modal"
           valueFormat="YYYY"
         />
-      </Group>
-
-      {leavesQuery.data?.length === 0 && (
-        <Alert icon={<IconInfoCircle size={16} />} variant="light">
-          Brak wniosków urlopowych w tym roku.
-        </Alert>
-      )}
-
-      <Stack>
-        {leavesQuery.data.map((leave) => (
-          <Card key={leave.id} withBorder>
-            <Group justify="space-between">
-              <Box>
-                <Text fw={600}>{leave.type}</Text>
-                <Text size="sm" c="dimmed">
-                  {dayjs(leave.dateFrom).format("DD-MM-YYYY")} —{" "}
-                  {dayjs(leave.dateTo).format("DD-MM-YYYY")}
-                </Text>
-                {leave.comment && (
-                  <Text size="sm" mt={6}>
-                    Komentarz: {leave.comment}
-                  </Text>
-                )}
-              </Box>
-              <Stack gap={2} align="end">
-                <Text size="sm">
-                  Status: <strong>{leave.status}</strong>
-                </Text>
-                {leave.deputy && (
-                  <Text size="xs" c="dimmed">
-                    Zastępstwo: {leave.deputy}
-                  </Text>
-                )}
-              </Stack>
-            </Group>
-          </Card>
-        ))}
+      }
+    >
+      <Stack gap="sm">
+        <LeavesCards data={leavesQuery.data} />
       </Stack>
-    </Stack>
+    </FullScreenRoute>
+  );
+}
+
+function LeavesCards({ data }: { data: LeaveResponse[] }) {
+  if (data.length === 0) {
+    return (
+      <Alert icon={<IconInfoCircle size={16} />} variant="light">
+        Brak wniosków urlopowych w tym roku.
+      </Alert>
+    );
+  }
+  return (
+    <>
+      {data.map((leave) => {
+        const fromDate = dayjs(leave.dateFrom);
+        const toDate = dayjs(leave.dateTo);
+        return (
+          <Card key={leave.id} withBorder>
+            <Stack gap="xs">
+              <Group justify="space-between">
+                <Text size="xs" c="dimmed" fw={700} tt="uppercase">
+                  {leave.type}
+                </Text>
+                <Badge size="xs" color="yellow">
+                  {leave.status}
+                </Badge>
+              </Group>
+              <Group justify="space-between">
+                <Group>
+                  <CalendarCard date={fromDate} />
+                  <Text c="dimmed">-</Text>
+                  <CalendarCard date={toDate} />
+                </Group>
+                <Text size="md">4 dni</Text>
+              </Group>
+              {leave.deputy && (
+                <Text size="xs">
+                  Zastępstwo: <strong>{leave.deputy}</strong>
+                </Text>
+              )}
+              {leave.comment && (
+                <Text size="xs" mt={6}>
+                  {leave.comment}
+                </Text>
+              )}
+            </Stack>
+          </Card>
+        );
+      })}
+    </>
+  );
+}
+
+function CalendarCard({ date }: { date: Dayjs }) {
+  return (
+    <Box py={8}>
+      <Stack gap={2} align="center" justify="center">
+        <Text size="xs">{date.format("MMM")}</Text>
+        <Text size="xs" fw="bold">
+          {date.format("DD")}
+        </Text>
+      </Stack>
+    </Box>
   );
 }
